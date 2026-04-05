@@ -90,6 +90,8 @@ The center of the screen is an overhead/isometric illustration of a tropical isl
   - Late-game: fortified — fences, security posts, blacked-out windows, submarines
 - The island transformation *is* the reward. Watching it evolve is the core visual feedback loop.
 
+**Island shape:** The base island silhouette must be recognizable as Little Saint James, USVI — Epstein's actual island. This is a silent meta-joke: players who recognize the shape get the punchline immediately; everyone else only realizes in retrospect. The shape is roughly a flattened oval with a small protruding peninsula on the northwest side and a dock/pier area on the south. Reference: search "Little Saint James island aerial" for the exact outline.
+
 **MVP implementation:** Layered PNG sprites composited over a base island image. Each venue type adds a sprite at a fixed island position on first purchase. Godot `CanvasItem` layering handles depth ordering.
 
 ---
