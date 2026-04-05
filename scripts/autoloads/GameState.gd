@@ -23,6 +23,7 @@ signal venue_count_changed(venue_id: String, count: int)
 signal upgrade_purchased(upgrade_id: String)
 signal vip_recruited(vip_id: String)
 signal game_over_triggered(ending: String)  # "arrested"
+signal game_reset()
 
 # ── Cached Rates (rebuilt on state change) ──────────────────────
 var _income_per_second: float = 0.0
@@ -284,7 +285,9 @@ func reset_game() -> void:
 	upgrades_purchased = {}
 	vips_recruited = {}
 	_rebuild_rates()
+	game_reset.emit()
 	money_changed.emit(money)
+	lifetime_money_changed.emit(lifetime_money)
 	heat_changed.emit(heat)
 	pi_changed.emit(political_influence)
 	if FileAccess.file_exists(SAVE_PATH):

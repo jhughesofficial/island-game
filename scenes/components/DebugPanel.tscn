@@ -37,3 +37,11 @@ text = "Heat → 0"
 
 [node name="AddPI" type="Button" parent="VBoxContainer"]
 text = "+500 PI"
+
+[node name="Sep2" type="HSeparator" parent="VBoxContainer"]
+
+[node name="TestRetire" type="Button" parent="VBoxContainer"]
+text = "Test: Retire Win"
+
+[node name="TestSuicide" type="Button" parent="VBoxContainer"]
+text = "Test: Suicide End"

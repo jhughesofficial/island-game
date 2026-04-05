@@ -15,6 +15,8 @@ func _ready() -> void:
 	$VBoxContainer/MaxHeat.pressed.connect(_on_max_heat)
 	$VBoxContainer/ResetHeat.pressed.connect(_on_reset_heat)
 	$VBoxContainer/AddPI.pressed.connect(_on_add_pi)
+	$VBoxContainer/TestRetire.pressed.connect(_on_test_retire)
+	$VBoxContainer/TestSuicide.pressed.connect(_on_test_suicide)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -47,3 +49,9 @@ func _on_reset_heat() -> void:
 func _on_add_pi() -> void:
 	GameState.political_influence += 500
 	GameState.pi_changed.emit(GameState.political_influence)
+
+func _on_test_retire() -> void:
+	GameState.game_over_triggered.emit("retired")
+
+func _on_test_suicide() -> void:
+	GameState.game_over_triggered.emit("suicide")

@@ -10,6 +10,7 @@ func _ready() -> void:
 	GameState.money_changed.connect(_on_money_changed)
 	GameState.pi_changed.connect(_on_pi_changed)
 	GameState.heat_changed.connect(_on_heat_changed)
+	settings_btn.pressed.connect(_on_settings_btn_pressed)
 	_refresh_all()
 
 func _refresh_all() -> void:

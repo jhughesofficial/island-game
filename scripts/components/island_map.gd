@@ -31,10 +31,20 @@ var _venue_nodes: Dictionary = {}
 
 func _ready() -> void:
 	GameState.venue_count_changed.connect(_on_venue_count_changed)
+	GameState.game_reset.connect(_sync_from_state)
 	throw_btn.pressed.connect(_on_throw_party)
+	_sync_from_state()
+
+func _sync_from_state() -> void:
+	# Clear existing sprites
+	for node in _venue_nodes.values():
+		node.queue_free()
+	_venue_nodes.clear()
+	# Re-add from current state
 	for venue_id in GameState.venue_counts:
 		if GameState.venue_counts[venue_id] > 0:
 			_show_venue(venue_id)
+
 
 func _on_venue_count_changed(venue_id: String, count: int) -> void:
 	if count == 1:
