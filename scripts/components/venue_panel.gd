@@ -20,6 +20,7 @@ func _make_row(venue: Dictionary) -> HBoxContainer:
 	row.add_theme_constant_override("separation", 8)
 
 	var info := VBoxContainer.new()
+	info.name = "Info"
 	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 	var name_lbl := Label.new()
@@ -68,7 +69,7 @@ func _on_venue_changed(venue_id: String, count: int) -> void:
 	for venue in _data_node.VENUES:
 		if venue.id == venue_id:
 			var income: float = venue.base_income * count
-			row.get_node("VBoxContainer/SubLabel").text = "%s  |  %s" % [venue.flavor, NumberFormatter.format_rate(income)]
+			row.get_node("Info/SubLabel").text = "%s  |  %s" % [venue.flavor, NumberFormatter.format_rate(income)]
 			break
 
 func _refresh_buttons(money: float) -> void:
