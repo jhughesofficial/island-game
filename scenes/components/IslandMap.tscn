@@ -1,0 +1,41 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/components/island_map.gd" id="1"]
+
+[node name="IslandMap" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1")
+
+[node name="IslandRect" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -80.0
+color = Color(0.1, 0.35, 0.15, 1)
+
+[node name="VenuesLayer" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -80.0
+
+[node name="ThrowPartyBtn" type="Button" parent="."]
+layout_mode = 1
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -80.0
+text = "🎉  THROW PARTY"
+theme_override_font_sizes/font_size = 22
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+position = Vector2(300, 300)
+emitting = false
+amount = 30
+lifetime = 0.8
+one_shot = true
+explosiveness = 0.9
+spread = 180.0
+gravity = Vector2(0, 200)
+initial_velocity_min = 80.0
+initial_velocity_max = 200.0
+color = Color(0.788, 0.667, 0.298, 1)

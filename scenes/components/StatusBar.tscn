@@ -1,0 +1,34 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/components/status_bar.gd" id="1"]
+
+[node name="StatusBar" type="PanelContainer"]
+script = ExtResource("1")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 20
+
+[node name="MoneyLabel" type="Label" parent="HBoxContainer"]
+size_flags_horizontal = 3
+text = "$0"
+theme_override_font_sizes/font_size = 22
+
+[node name="RateLabel" type="Label" parent="HBoxContainer"]
+size_flags_horizontal = 3
+text = "0/sec"
+theme_override_font_sizes/font_size = 14
+
+[node name="PILabel" type="Label" parent="HBoxContainer"]
+size_flags_horizontal = 3
+text = "🏛 0 PI"
+theme_override_font_sizes/font_size = 16
+
+[node name="HeatLabel" type="Label" parent="HBoxContainer"]
+size_flags_horizontal = 3
+text = "· · · · ·"
+theme_override_font_sizes/font_size = 18
+
+[node name="SettingsBtn" type="Button" parent="HBoxContainer"]
+text = "⚙"
