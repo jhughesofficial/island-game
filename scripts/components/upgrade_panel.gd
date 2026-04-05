@@ -26,11 +26,11 @@ func _make_row(upg: Dictionary) -> HBoxContainer:
 	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var name_lbl := Label.new()
 	name_lbl.text = upg.name
-	name_lbl.theme_override_font_sizes/font_size = 14
+	name_lbl.add_theme_font_size_override("font_size", 14)
 	info.add_child(name_lbl)
 	var sub_lbl := Label.new()
 	sub_lbl.text = upg.flavor
-	sub_lbl.theme_override_font_sizes/font_size = 11
+	sub_lbl.add_theme_font_size_override("font_size", 11)
 	sub_lbl.modulate = Color(0.7, 0.7, 0.7)
 	info.add_child(sub_lbl)
 	row.add_child(info)

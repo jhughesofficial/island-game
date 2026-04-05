@@ -17,7 +17,7 @@ func _build_list() -> void:
 func _make_row(venue: Dictionary) -> HBoxContainer:
 	var row := HBoxContainer.new()
 	row.name = "row_" + venue.id
-	row.theme_override_constants/separation = 8
+	row.add_theme_constant_override("separation", 8)
 
 	var info := VBoxContainer.new()
 	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -25,13 +25,13 @@ func _make_row(venue: Dictionary) -> HBoxContainer:
 	var name_lbl := Label.new()
 	name_lbl.name = "NameLabel"
 	name_lbl.text = venue.name
-	name_lbl.theme_override_font_sizes/font_size = 15
+	name_lbl.add_theme_font_size_override("font_size", 15)
 	info.add_child(name_lbl)
 
 	var sub_lbl := Label.new()
 	sub_lbl.name = "SubLabel"
 	sub_lbl.text = venue.flavor
-	sub_lbl.theme_override_font_sizes/font_size = 11
+	sub_lbl.add_theme_font_size_override("font_size", 11)
 	sub_lbl.modulate = Color(0.7, 0.7, 0.7)
 	info.add_child(sub_lbl)
 

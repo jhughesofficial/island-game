@@ -266,7 +266,7 @@ func load_game() -> void:
 	var saved_at: int = int(parsed.get("saved_at", 0))
 	if saved_at > 0:
 		var elapsed: int = mini(
-			Time.get_unix_time_from_system() - saved_at,
+			int(Time.get_unix_time_from_system()) - saved_at,
 			OFFLINE_CAP_SECONDS
 		)
 		if elapsed > 0:
