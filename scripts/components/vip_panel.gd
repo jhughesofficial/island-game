@@ -8,32 +8,37 @@ func _ready() -> void:
 	GameState.lifetime_money_changed.connect(_on_lifetime_changed)
 	GameState.vip_recruited.connect(_on_vip_recruited)
 	GameState.money_changed.connect(_on_money_changed)
+	GameState.game_reset.connect(_refresh_list)
 	_refresh_list()
 
-func _refresh_list() -> void:
+func _clear_list() -> void:
 	for child in list.get_children():
+		list.remove_child(child)
 		child.queue_free()
 
-	var vips: Array = _data_node.VIPS
-	var shown_locked := false
-	for vip in vips:
+func _refresh_list() -> void:
+	_clear_list()
+	var next_locked: Dictionary = {}
+	for vip in _data_node.VIPS:
 		if GameState.vips_recruited.get(vip.id, false):
-			continue  # already recruited, skip
+			continue
 		if GameState.vip_is_available(vip.id):
 			list.add_child(_make_row(vip))
-		elif not shown_locked:
-			list.add_child(_make_mystery_row())
-			shown_locked = true
+		elif next_locked.is_empty():
+			next_locked = vip
+	if not next_locked.is_empty():
+		list.add_child(_make_mystery_row(next_locked))
 
 func _make_row(vip: Dictionary) -> HBoxContainer:
 	var row := HBoxContainer.new()
 	row.name = "vip_" + vip.id
+	row.add_theme_constant_override("separation", 8)
 
 	var info := VBoxContainer.new()
 	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var name_lbl := Label.new()
 	name_lbl.text = vip.name
-	name_lbl.add_theme_font_size_override("font_size", 14)
+	name_lbl.add_theme_font_size_override("font_size", 15)
 	info.add_child(name_lbl)
 	var sub_lbl := Label.new()
 	sub_lbl.text = "%s  |  x%.1f earnings  |  +%d PI" % [vip.flavor, vip.multiplier, vip.pi_award]
@@ -51,15 +56,29 @@ func _make_row(vip: Dictionary) -> HBoxContainer:
 	row.add_child(btn)
 	return row
 
-func _make_mystery_row() -> HBoxContainer:
+func _make_mystery_row(next_vip: Dictionary) -> HBoxContainer:
 	var row := HBoxContainer.new()
 	row.name = "vip_mystery"
-	var lbl := Label.new()
-	lbl.text = "???  —  ???"
-	lbl.modulate = Color(0.5, 0.5, 0.5)
-	lbl.add_theme_font_size_override("font_size", 14)
-	lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(lbl)
+	row.add_theme_constant_override("separation", 8)
+	row.modulate = Color(0.5, 0.5, 0.5)
+
+	var info := VBoxContainer.new()
+	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var name_lbl := Label.new()
+	name_lbl.text = "Unlock %s to reveal" % next_vip.name
+	name_lbl.add_theme_font_size_override("font_size", 15)
+	info.add_child(name_lbl)
+	var sub_lbl := Label.new()
+	sub_lbl.text = "???"
+	sub_lbl.add_theme_font_size_override("font_size", 11)
+	info.add_child(sub_lbl)
+	row.add_child(info)
+
+	var btn := Button.new()
+	btn.text = "???"
+	btn.custom_minimum_size = Vector2(110, 0)
+	btn.disabled = true
+	row.add_child(btn)
 	return row
 
 func _on_recruit(vip_id: String) -> void:

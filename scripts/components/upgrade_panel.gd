@@ -8,32 +8,37 @@ func _ready() -> void:
 	GameState.lifetime_money_changed.connect(_on_lifetime_changed)
 	GameState.upgrade_purchased.connect(_on_upgrade_purchased)
 	GameState.money_changed.connect(_on_money_changed)
+	GameState.game_reset.connect(_refresh_list)
 	_refresh_list()
 
-func _refresh_list() -> void:
+func _clear_list() -> void:
 	for child in list.get_children():
+		list.remove_child(child)
 		child.queue_free()
 
-	var upgrades: Array = _data_node.UPGRADES
-	var shown_locked := false
-	for upg in upgrades:
-		if upgrades_purchased.get(upg.id, false):
-			continue  # already bought, skip
+func _refresh_list() -> void:
+	_clear_list()
+	var next_locked: Dictionary = {}
+	for upg in _data_node.UPGRADES:
+		if GameState.upgrades_purchased.get(upg.id, false):
+			continue
 		if GameState.upgrade_is_available(upg.id):
 			list.add_child(_make_row(upg))
-		elif not shown_locked:
-			list.add_child(_make_mystery_row())
-			shown_locked = true
+		elif next_locked.is_empty():
+			next_locked = upg
+	if not next_locked.is_empty():
+		list.add_child(_make_mystery_row(next_locked))
 
 func _make_row(upg: Dictionary) -> HBoxContainer:
 	var row := HBoxContainer.new()
 	row.name = "upg_" + upg.id
+	row.add_theme_constant_override("separation", 8)
 
 	var info := VBoxContainer.new()
 	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var name_lbl := Label.new()
 	name_lbl.text = upg.name
-	name_lbl.add_theme_font_size_override("font_size", 14)
+	name_lbl.add_theme_font_size_override("font_size", 15)
 	info.add_child(name_lbl)
 	var sub_lbl := Label.new()
 	sub_lbl.text = upg.flavor
@@ -51,15 +56,29 @@ func _make_row(upg: Dictionary) -> HBoxContainer:
 	row.add_child(btn)
 	return row
 
-func _make_mystery_row() -> HBoxContainer:
+func _make_mystery_row(next_upg: Dictionary) -> HBoxContainer:
 	var row := HBoxContainer.new()
 	row.name = "upg_mystery"
-	var lbl := Label.new()
-	lbl.text = "???  —  ???"
-	lbl.modulate = Color(0.5, 0.5, 0.5)
-	lbl.add_theme_font_size_override("font_size", 14)
-	lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(lbl)
+	row.add_theme_constant_override("separation", 8)
+	row.modulate = Color(0.5, 0.5, 0.5)
+
+	var info := VBoxContainer.new()
+	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var name_lbl := Label.new()
+	name_lbl.text = "Unlock %s to reveal" % next_upg.name
+	name_lbl.add_theme_font_size_override("font_size", 15)
+	info.add_child(name_lbl)
+	var sub_lbl := Label.new()
+	sub_lbl.text = "???"
+	sub_lbl.add_theme_font_size_override("font_size", 11)
+	info.add_child(sub_lbl)
+	row.add_child(info)
+
+	var btn := Button.new()
+	btn.text = "???"
+	btn.custom_minimum_size = Vector2(100, 0)
+	btn.disabled = true
+	row.add_child(btn)
 	return row
 
 func _on_buy(upgrade_id: String) -> void:
@@ -77,7 +96,3 @@ func _on_money_changed(money: float) -> void:
 		if row == null:
 			continue
 		row.get_node("BuyBtn").disabled = money < upg.cost
-
-# Helper to check already purchased (mirrors GameState)
-var upgrades_purchased: Dictionary:
-	get: return GameState.upgrades_purchased
