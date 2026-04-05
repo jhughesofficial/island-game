@@ -1,0 +1,19 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the properties have various types.
+
+[application]
+
+config/name="The Island"
+config/features=PackedStringArray("4.3", "Forward Plus")
+run/main_scene="res://scenes/Main.tscn"
+config/icon="res://icon.svg"
+
+[autoload]
+
+GameState="*res://scripts/autoloads/GameState.gd"
+NumberFormatter="*res://scripts/utils/NumberFormatter.gd"
+
+[rendering]
+
+renderer/rendering_method="forward_plus"
