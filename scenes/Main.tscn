@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/components/main.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/components/StatusBar.tscn" id="2"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://scenes/components/TabPanel.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/components/GameOver.tscn" id="5"]
 [ext_resource type="PackedScene" path="res://scenes/components/SettingsPanel.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/components/DebugPanel.tscn" id="7"]
 
 [node name="Main" type="Control"]
 anchor_right = 1.0
@@ -47,3 +48,9 @@ offset_right = 200.0
 offset_bottom = 150.0
 
 [node name="SaveTimer" type="Timer" parent="."]
+
+[node name="DebugPanel" parent="." instance=ExtResource("7")]
+layout_mode = 1
+anchor_bottom = 1.0
+offset_right = 120.0
+offset_top = 64.0
