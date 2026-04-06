@@ -2,12 +2,12 @@ extends PanelContainer
 
 const RETIRE_PI_THRESHOLD: int = 100
 
-@onready var money_label: Label = $HBoxContainer/MoneyLabel
-@onready var rate_label: Label = $HBoxContainer/RateLabel
-@onready var pi_label: Label = $HBoxContainer/PILabel
-@onready var heat_label: Label = $HBoxContainer/HeatLabel
-@onready var retire_btn: Button = $HBoxContainer/RetireBtn
-@onready var settings_btn: Button = $HBoxContainer/SettingsBtn
+@onready var money_label: Label = $MarginContainer/HBoxContainer/MoneyLabel
+@onready var rate_label: Label = $MarginContainer/HBoxContainer/RateLabel
+@onready var pi_label: Label = $MarginContainer/HBoxContainer/PILabel
+@onready var heat_label: Label = $MarginContainer/HBoxContainer/HeatLabel
+@onready var retire_btn: Button = $MarginContainer/HBoxContainer/RetireBtn
+@onready var settings_btn: Button = $MarginContainer/HBoxContainer/SettingsBtn
 
 func _ready() -> void:
 	GameState.money_changed.connect(_on_money_changed)

@@ -1,6 +1,6 @@
 extends ScrollContainer
 
-@onready var list: VBoxContainer = $VBoxContainer
+@onready var list: VBoxContainer = $MarginContainer/VBoxContainer
 var _data_node: Node
 
 func _ready() -> void:
@@ -36,9 +36,11 @@ func _make_row(upg: Dictionary) -> HBoxContainer:
 	var row := HBoxContainer.new()
 	row.name = "upg_" + upg.id
 	row.add_theme_constant_override("separation", 8)
+	row.custom_minimum_size = Vector2(0, 56)
 
 	var info := VBoxContainer.new()
 	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	info.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	var name_lbl := Label.new()
 	name_lbl.text = upg.name
 	name_lbl.add_theme_font_size_override("font_size", 15)
