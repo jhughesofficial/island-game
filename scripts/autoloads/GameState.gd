@@ -23,6 +23,8 @@ signal venue_count_changed(venue_id: String, count: int)
 signal upgrade_purchased(upgrade_id: String)
 signal vip_recruited(vip_id: String)
 signal game_over_triggered(ending: String)  # "arrested"
+signal arrest_countdown_changed(seconds: float)  # emits each frame during critical
+signal offline_earnings_received(amount: float)
 signal game_reset()
 
 # ── Cached Rates (rebuilt on state change) ──────────────────────
@@ -74,9 +76,12 @@ func _check_critical(delta: float) -> void:
 			_critical_timer = HEAT_CRITICAL_COUNTDOWN
 		else:
 			_critical_timer -= delta
+			arrest_countdown_changed.emit(_critical_timer)
 			if _critical_timer <= 0.0:
 				game_over_triggered.emit("arrested")
 	else:
+		if _is_critical:
+			arrest_countdown_changed.emit(0.0)
 		_is_critical = false
 		_critical_timer = 0.0
 
@@ -275,6 +280,10 @@ func load_game() -> void:
 			var offline_earned: float = _income_per_second * elapsed
 			if offline_earned > 0.0:
 				_add_money(offline_earned)
+				call_deferred("_emit_offline_earnings", offline_earned)
+
+func _emit_offline_earnings(amount: float) -> void:
+	offline_earnings_received.emit(amount)
 
 func reset_game() -> void:
 	money = 0.0

@@ -6,17 +6,27 @@ const RETIRE_PI_THRESHOLD: int = 100
 @onready var rate_label: Label = $MarginContainer/HBoxContainer/RateLabel
 @onready var pi_label: Label = $MarginContainer/HBoxContainer/PILabel
 @onready var heat_label: Label = $MarginContainer/HBoxContainer/HeatLabel
+@onready var arrest_label: Label = $MarginContainer/HBoxContainer/ArrestLabel
 @onready var retire_btn: Button = $MarginContainer/HBoxContainer/RetireBtn
 @onready var settings_btn: Button = $MarginContainer/HBoxContainer/SettingsBtn
+
+var _flash_t: float = 0.0
 
 func _ready() -> void:
 	GameState.money_changed.connect(_on_money_changed)
 	GameState.pi_changed.connect(_on_pi_changed)
 	GameState.heat_changed.connect(_on_heat_changed)
+	GameState.arrest_countdown_changed.connect(_on_arrest_countdown)
 	GameState.game_reset.connect(_refresh_all)
 	settings_btn.pressed.connect(_on_settings_btn_pressed)
 	retire_btn.pressed.connect(_on_retire_pressed)
+	arrest_label.hide()
 	_refresh_all()
+
+func _process(delta: float) -> void:
+	if arrest_label.visible:
+		_flash_t += delta * 4.0
+		arrest_label.modulate.a = 0.5 + 0.5 * sin(_flash_t)
 
 func _refresh_all() -> void:
 	_on_money_changed(GameState.money)
@@ -41,6 +51,13 @@ func _on_heat_changed(heat: float) -> void:
 		heat_label.add_theme_color_override("font_color", Color(1, 0.5, 0.0))
 	else:
 		heat_label.add_theme_color_override("font_color", Color(0.8, 0.65, 0.2))
+
+func _on_arrest_countdown(seconds: float) -> void:
+	if seconds <= 0.0:
+		arrest_label.hide()
+	else:
+		arrest_label.text = "⚠ ARREST IN %ds" % ceili(seconds)
+		arrest_label.show()
 
 func _on_retire_pressed() -> void:
 	GameState.game_over_triggered.emit("retired")

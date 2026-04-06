@@ -22,6 +22,7 @@ func _refresh_list() -> void:
 	var last_shown_name: String = ""
 	for vip in _data_node.VIPS:
 		if GameState.vips_recruited.get(vip.id, false):
+			list.add_child(_make_recruited_row(vip))
 			last_shown_name = vip.name
 			continue
 		if GameState.vip_is_available(vip.id):
@@ -59,6 +60,35 @@ func _make_row(vip: Dictionary) -> HBoxContainer:
 	btn.disabled = GameState.money < vip.cost
 	btn.pressed.connect(_on_recruit.bind(vip.id))
 	row.add_child(btn)
+	return row
+
+func _make_recruited_row(vip: Dictionary) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.name = "vip_recruited_" + vip.id
+	row.add_theme_constant_override("separation", 8)
+	row.custom_minimum_size = Vector2(0, 48)
+	row.modulate = Color(0.55, 0.55, 0.55, 1)
+
+	var info := VBoxContainer.new()
+	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	info.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var name_lbl := Label.new()
+	name_lbl.text = vip.name
+	name_lbl.add_theme_font_size_override("font_size", 15)
+	info.add_child(name_lbl)
+	var sub_lbl := Label.new()
+	sub_lbl.text = vip.flavor
+	sub_lbl.add_theme_font_size_override("font_size", 11)
+	info.add_child(sub_lbl)
+	row.add_child(info)
+
+	var badge := Label.new()
+	badge.text = "✓ On Island"
+	badge.custom_minimum_size = Vector2(110, 0)
+	badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	badge.add_theme_font_size_override("font_size", 12)
+	badge.add_theme_color_override("font_color", Color(0.4, 0.8, 0.4, 1))
+	row.add_child(badge)
 	return row
 
 func _make_mystery_row(prereq_name: String) -> HBoxContainer:
