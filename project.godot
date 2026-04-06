@@ -15,7 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="The Island"
-run/main_scene="res://scenes/Main.tscn"
+run/main_scene="res://scenes/MainMenu.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -23,6 +23,7 @@ config/icon="res://icon.svg"
 
 GameState="*res://scripts/autoloads/GameState.gd"
 NumberFormatter="*res://scripts/utils/NumberFormatter.gd"
+MCPRuntime="*uid://dbka41haun54r"
 
 [editor_plugins]
 
