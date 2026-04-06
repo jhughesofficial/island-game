@@ -67,12 +67,26 @@ func _reposition_venue(venue_id: String, node: ColorRect) -> void:
 	node.position = pos_norm * venues_layer.size - node.size * 0.5
 
 func _on_throw_party() -> void:
-	GameState.click_party()
+	var earned: float = GameState.click_party()
 	_play_click_particles()
+	_spawn_click_label(earned)
 
 func _play_click_particles() -> void:
 	particles.restart()
 	particles.emitting = true
+
+func _spawn_click_label(amount: float) -> void:
+	var lbl := Label.new()
+	lbl.text = "+" + NumberFormatter.format(amount)
+	lbl.add_theme_font_size_override("font_size", 18)
+	lbl.add_theme_color_override("font_color", Color(0.788, 0.659, 0.298, 1))
+	lbl.position = throw_btn.position + Vector2(randf_range(60, throw_btn.size.x - 60), -20)
+	add_child(lbl)
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(lbl, "position:y", lbl.position.y - 60, 0.8).set_ease(Tween.EASE_OUT)
+	tween.tween_property(lbl, "modulate:a", 0.0, 0.8).set_ease(Tween.EASE_IN)
+	tween.chain().tween_callback(lbl.queue_free)
 
 func _on_resized() -> void:
 	for venue_id in _venue_nodes:

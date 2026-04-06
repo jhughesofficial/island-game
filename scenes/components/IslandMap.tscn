@@ -7,11 +7,19 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource("1")
 
+[node name="OceanBg" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.04, 0.12, 0.22, 1)
+
 [node name="IslandRect" type="ColorRect" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_bottom = -80.0
-color = Color(0.1, 0.35, 0.15, 1)
+offset_left = 40.0
+offset_right = -40.0
+offset_top = 30.0
+offset_bottom = -110.0
+color = Color(0.13, 0.38, 0.17, 1)
 
 [node name="VenuesLayer" type="Control" parent="."]
 anchor_right = 1.0
