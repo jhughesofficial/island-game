@@ -1,16 +1,21 @@
 extends PanelContainer
 
+const RETIRE_PI_THRESHOLD: int = 100
+
 @onready var money_label: Label = $HBoxContainer/MoneyLabel
 @onready var rate_label: Label = $HBoxContainer/RateLabel
 @onready var pi_label: Label = $HBoxContainer/PILabel
 @onready var heat_label: Label = $HBoxContainer/HeatLabel
+@onready var retire_btn: Button = $HBoxContainer/RetireBtn
 @onready var settings_btn: Button = $HBoxContainer/SettingsBtn
 
 func _ready() -> void:
 	GameState.money_changed.connect(_on_money_changed)
 	GameState.pi_changed.connect(_on_pi_changed)
 	GameState.heat_changed.connect(_on_heat_changed)
+	GameState.game_reset.connect(_refresh_all)
 	settings_btn.pressed.connect(_on_settings_btn_pressed)
+	retire_btn.pressed.connect(_on_retire_pressed)
 	_refresh_all()
 
 func _refresh_all() -> void:
@@ -24,6 +29,7 @@ func _on_money_changed(amount: float) -> void:
 
 func _on_pi_changed(pi: int) -> void:
 	pi_label.text = "🏛 %s" % NumberFormatter.format_pi(pi)
+	retire_btn.visible = pi >= RETIRE_PI_THRESHOLD
 
 func _on_heat_changed(heat: float) -> void:
 	var stars: int = ceili(heat)
@@ -35,6 +41,9 @@ func _on_heat_changed(heat: float) -> void:
 		heat_label.add_theme_color_override("font_color", Color(1, 0.5, 0.0))
 	else:
 		heat_label.add_theme_color_override("font_color", Color(0.8, 0.65, 0.2))
+
+func _on_retire_pressed() -> void:
+	GameState.game_over_triggered.emit("retired")
 
 func _on_settings_btn_pressed() -> void:
 	get_parent()._on_settings_button_pressed()

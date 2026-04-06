@@ -29,7 +29,9 @@ func _build_list() -> void:
 		if i <= show_up_to:
 			list.add_child(_make_row(venues[i]))
 		elif not shown_mystery:
-			list.add_child(_make_mystery_row(venues[i]))
+			# Pass the prerequisite name (last visible venue), not the hidden one
+			var prereq_name: String = venues[show_up_to].name if show_up_to >= 0 else ""
+			list.add_child(_make_mystery_row(prereq_name))
 			shown_mystery = true
 			break
 
@@ -75,7 +77,7 @@ func _make_row(venue: Dictionary) -> HBoxContainer:
 	row.add_child(buy_btn)
 	return row
 
-func _make_mystery_row(next_venue: Dictionary) -> HBoxContainer:
+func _make_mystery_row(prereq_name: String) -> HBoxContainer:
 	var row := HBoxContainer.new()
 	row.name = "row_mystery"
 	row.add_theme_constant_override("separation", 8)
@@ -84,7 +86,7 @@ func _make_mystery_row(next_venue: Dictionary) -> HBoxContainer:
 	var info := VBoxContainer.new()
 	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var name_lbl := Label.new()
-	name_lbl.text = "Unlock %s to reveal" % next_venue.name
+	name_lbl.text = "Unlock %s to reveal" % prereq_name if prereq_name != "" else "Keep earning to reveal"
 	name_lbl.add_theme_font_size_override("font_size", 15)
 	info.add_child(name_lbl)
 	var sub_lbl := Label.new()

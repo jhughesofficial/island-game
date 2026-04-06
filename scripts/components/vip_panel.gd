@@ -19,15 +19,18 @@ func _clear_list() -> void:
 func _refresh_list() -> void:
 	_clear_list()
 	var next_locked: Dictionary = {}
+	var last_shown_name: String = ""
 	for vip in _data_node.VIPS:
 		if GameState.vips_recruited.get(vip.id, false):
+			last_shown_name = vip.name
 			continue
 		if GameState.vip_is_available(vip.id):
 			list.add_child(_make_row(vip))
+			last_shown_name = vip.name
 		elif next_locked.is_empty():
 			next_locked = vip
 	if not next_locked.is_empty():
-		list.add_child(_make_mystery_row(next_locked))
+		list.add_child(_make_mystery_row(last_shown_name))
 
 func _make_row(vip: Dictionary) -> HBoxContainer:
 	var row := HBoxContainer.new()
@@ -56,7 +59,7 @@ func _make_row(vip: Dictionary) -> HBoxContainer:
 	row.add_child(btn)
 	return row
 
-func _make_mystery_row(next_vip: Dictionary) -> HBoxContainer:
+func _make_mystery_row(prereq_name: String) -> HBoxContainer:
 	var row := HBoxContainer.new()
 	row.name = "vip_mystery"
 	row.add_theme_constant_override("separation", 8)
@@ -65,7 +68,7 @@ func _make_mystery_row(next_vip: Dictionary) -> HBoxContainer:
 	var info := VBoxContainer.new()
 	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var name_lbl := Label.new()
-	name_lbl.text = "Unlock %s to reveal" % next_vip.name
+	name_lbl.text = "Unlock %s to reveal" % prereq_name if prereq_name != "" else "Keep earning to reveal"
 	name_lbl.add_theme_font_size_override("font_size", 15)
 	info.add_child(name_lbl)
 	var sub_lbl := Label.new()
