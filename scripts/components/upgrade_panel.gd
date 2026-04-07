@@ -2,6 +2,7 @@ extends ScrollContainer
 
 @onready var list: VBoxContainer = $MarginContainer/VBoxContainer
 var _data_node: Node
+var _last_sig: String = ""
 
 func _ready() -> void:
 	_data_node = load("res://scripts/data/UpgradeData.gd").new()
@@ -16,7 +17,15 @@ func _clear_list() -> void:
 		list.remove_child(child)
 		child.queue_free()
 
+func _get_sig() -> String:
+	var parts: Array = []
+	for upg in _data_node.UPGRADES:
+		if not GameState.upgrades_purchased.get(upg.id, false) and GameState.upgrade_is_available(upg.id):
+			parts.append(upg.id)
+	return ",".join(parts)
+
 func _refresh_list() -> void:
+	_last_sig = _get_sig()
 	_clear_list()
 	var next_locked: Dictionary = {}
 	var last_shown_name: String = ""
@@ -90,7 +99,9 @@ func _on_buy(upgrade_id: String) -> void:
 	GameState.buy_upgrade(upgrade_id)
 
 func _on_lifetime_changed(_amount: float) -> void:
-	_refresh_list()
+	var sig := _get_sig()
+	if sig != _last_sig:
+		_refresh_list()
 
 func _on_upgrade_purchased(_id: String) -> void:
 	_refresh_list()

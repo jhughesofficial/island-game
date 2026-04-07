@@ -13,6 +13,8 @@ var venue_counts: Dictionary = {}
 var upgrades_purchased: Dictionary = {}
 # { vip_id: bool }
 var vips_recruited: Dictionary = {}
+# { staff_id: int }
+var staff_counts: Dictionary = {}
 
 # ── Signals ─────────────────────────────────────────────────────
 signal money_changed(amount: float)
@@ -22,8 +24,9 @@ signal heat_changed(heat: float)
 signal venue_count_changed(venue_id: String, count: int)
 signal upgrade_purchased(upgrade_id: String)
 signal vip_recruited(vip_id: String)
-signal game_over_triggered(ending: String)  # "arrested"
-signal arrest_countdown_changed(seconds: float)  # emits each frame during critical
+signal staff_count_changed(staff_id: String, count: int)
+signal game_over_triggered(ending: String)
+signal arrest_countdown_changed(seconds: float)
 signal offline_earnings_received(amount: float)
 signal game_reset()
 
@@ -32,11 +35,14 @@ var _income_per_second: float = 0.0
 var _click_value: float = 1.0
 var _heat_per_second: float = 0.0
 var _vip_multiplier: float = 1.0
+var _auto_clicks_per_second: float = 0.0
+var _auto_click_acc: float = 0.0
 
 # ── Data refs (loaded once) ──────────────────────────────────────
 var _venue_data: Node
 var _vip_data: Node
 var _upgrade_data: Node
+var _staff_data: Node
 
 const HEAT_CRITICAL: float = 5.0
 const HEAT_CRITICAL_COUNTDOWN: float = 60.0
@@ -48,6 +54,7 @@ func _ready() -> void:
 	_venue_data = load("res://scripts/data/VenueData.gd").new()
 	_vip_data = load("res://scripts/data/VIPData.gd").new()
 	_upgrade_data = load("res://scripts/data/UpgradeData.gd").new()
+	_staff_data = load("res://scripts/data/StaffData.gd").new()
 	load_game()
 	_rebuild_rates()
 
@@ -55,6 +62,7 @@ func _process(delta: float) -> void:
 	_tick_income(delta)
 	_tick_heat(delta)
 	_check_critical(delta)
+	_tick_auto_click(delta)
 
 # ── Tick ─────────────────────────────────────────────────────────
 func _tick_income(delta: float) -> void:
@@ -85,6 +93,14 @@ func _check_critical(delta: float) -> void:
 		_is_critical = false
 		_critical_timer = 0.0
 
+func _tick_auto_click(delta: float) -> void:
+	if _auto_clicks_per_second == 0.0:
+		return
+	_auto_click_acc += _auto_clicks_per_second * delta
+	while _auto_click_acc >= 1.0:
+		_add_money(_click_value)
+		_auto_click_acc -= 1.0
+
 # ── Player Actions ───────────────────────────────────────────────
 func click_party() -> float:
 	var earned: float = _click_value
@@ -105,6 +121,39 @@ func buy_venue(venue_id: String) -> bool:
 	venue_count_changed.emit(venue_id, venue_counts[venue_id])
 	_rebuild_rates()
 	return true
+
+func buy_venue_n(venue_id: String, n: int) -> int:
+	var bought := 0
+	for i in range(n):
+		if not buy_venue(venue_id):
+			break
+		bought += 1
+	return bought
+
+func venue_max_affordable(venue_id: String) -> int:
+	var venue = _get_venue(venue_id)
+	if venue == null:
+		return 0
+	var count: int = venue_counts.get(venue_id, 0)
+	var budget: float = money
+	var n := 0
+	while n < 10000:
+		var cost: float = _venue_data.get_cost(venue, count + n)
+		if budget < cost:
+			break
+		budget -= cost
+		n += 1
+	return n
+
+func venue_cost_n(venue_id: String, n: int) -> float:
+	var venue = _get_venue(venue_id)
+	if venue == null:
+		return 0.0
+	var count: int = venue_counts.get(venue_id, 0)
+	var total: float = 0.0
+	for i in range(n):
+		total += _venue_data.get_cost(venue, count + i)
+	return total
 
 func buy_upgrade(upgrade_id: String) -> bool:
 	if upgrades_purchased.get(upgrade_id, false):
@@ -134,13 +183,67 @@ func recruit_vip(vip_id: String) -> bool:
 	vips_recruited[vip_id] = true
 	political_influence += vip.pi_award
 	pi_changed.emit(political_influence)
-	# Apply secondary effect
 	if vip.effect == "heat_reduce_1":
 		heat = maxf(0.0, heat - 1.0)
 		heat_changed.emit(heat)
 	vip_recruited.emit(vip_id)
 	_rebuild_rates()
 	return true
+
+func buy_staff(staff_id: String) -> bool:
+	var staff = _get_staff(staff_id)
+	if staff == null:
+		return false
+	var count: int = staff_counts.get(staff_id, 0)
+	var cost: float = _staff_data.get_cost(staff, count)
+	if money < cost:
+		return false
+	money -= cost
+	money_changed.emit(money)
+	staff_counts[staff_id] = count + 1
+	staff_count_changed.emit(staff_id, staff_counts[staff_id])
+	_rebuild_rates()
+	return true
+
+func buy_staff_n(staff_id: String, n: int) -> int:
+	var bought := 0
+	for i in range(n):
+		if not buy_staff(staff_id):
+			break
+		bought += 1
+	return bought
+
+func staff_max_affordable(staff_id: String) -> int:
+	var staff = _get_staff(staff_id)
+	if staff == null:
+		return 0
+	var count: int = staff_counts.get(staff_id, 0)
+	var budget: float = money
+	var n := 0
+	while n < 10000:
+		var cost: float = _staff_data.get_cost(staff, count + n)
+		if budget < cost:
+			break
+		budget -= cost
+		n += 1
+	return n
+
+func staff_cost(staff_id: String) -> float:
+	var staff = _get_staff(staff_id)
+	if staff == null:
+		return 0.0
+	var count: int = staff_counts.get(staff_id, 0)
+	return _staff_data.get_cost(staff, count)
+
+func staff_cost_n(staff_id: String, n: int) -> float:
+	var staff = _get_staff(staff_id)
+	if staff == null:
+		return 0.0
+	var count: int = staff_counts.get(staff_id, 0)
+	var total: float = 0.0
+	for i in range(n):
+		total += _staff_data.get_cost(staff, count + i)
+	return total
 
 # ── Rate Calculation ─────────────────────────────────────────────
 func _rebuild_rates() -> void:
@@ -150,13 +253,6 @@ func _rebuild_rates() -> void:
 		if vips_recruited.get(vip.id, false):
 			_vip_multiplier *= vip.multiplier
 
-	# Click value
-	_click_value = 1.0
-	for upg in _upgrade_data.UPGRADES:
-		if upg.type == "click" and upgrades_purchased.get(upg.id, false):
-			_click_value *= upg.multiplier
-	_click_value *= _vip_multiplier
-
 	# Income per second + heat per second
 	_income_per_second = 0.0
 	_heat_per_second = 0.0
@@ -165,7 +261,6 @@ func _rebuild_rates() -> void:
 		if count == 0:
 			continue
 		var qty_mult: float = _venue_data.get_quantity_multiplier(count)
-		# Venue-specific upgrade multiplier
 		var upg_mult: float = 1.0
 		for upg in _upgrade_data.UPGRADES:
 			if upg.type == venue.id and upgrades_purchased.get(upg.id, false):
@@ -173,15 +268,32 @@ func _rebuild_rates() -> void:
 		_income_per_second += venue.base_income * count * qty_mult * upg_mult
 		_heat_per_second += venue.heat_rate * count
 	_income_per_second *= _vip_multiplier
-	# Heat suppression VIP effect
 	if vips_recruited.get("president", false):
 		_heat_per_second = maxf(0.0, _heat_per_second - 0.02)
+
+	# Click value: 10% of passive income (min $1), boosted by click upgrades + VIPs
+	var click_base: float = maxf(1.0, _income_per_second * 0.1)
+	var click_upg_mult: float = 1.0
+	for upg in _upgrade_data.UPGRADES:
+		if upg.type == "click" and upgrades_purchased.get(upg.id, false):
+			click_upg_mult *= upg.multiplier
+	_click_value = click_base * click_upg_mult * _vip_multiplier
+
+	# Auto-clicks from staff
+	_auto_clicks_per_second = 0.0
+	for staff in _staff_data.STAFF:
+		var count: int = staff_counts.get(staff.id, 0)
+		if count > 0:
+			_auto_clicks_per_second += staff.clicks_per_second * count
 
 func get_income_per_second() -> float:
 	return _income_per_second
 
 func get_click_value() -> float:
 	return _click_value
+
+func get_auto_clicks_per_second() -> float:
+	return _auto_clicks_per_second
 
 func get_heat_stars() -> int:
 	return ceili(heat)
@@ -209,6 +321,12 @@ func _get_upgrade(upgrade_id: String) -> Variant:
 	for u in _upgrade_data.UPGRADES:
 		if u.id == upgrade_id:
 			return u
+	return null
+
+func _get_staff(staff_id: String) -> Variant:
+	for s in _staff_data.STAFF:
+		if s.id == staff_id:
+			return s
 	return null
 
 func venue_cost(venue_id: String) -> float:
@@ -243,6 +361,7 @@ func save_game() -> void:
 		"venue_counts": venue_counts,
 		"upgrades_purchased": upgrades_purchased,
 		"vips_recruited": vips_recruited,
+		"staff_counts": staff_counts,
 		"saved_at": Time.get_unix_time_from_system()
 	}
 	var file = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
@@ -268,6 +387,7 @@ func load_game() -> void:
 	venue_counts = parsed.get("venue_counts", {})
 	upgrades_purchased = parsed.get("upgrades_purchased", {})
 	vips_recruited = parsed.get("vips_recruited", {})
+	staff_counts = parsed.get("staff_counts", {})
 	# Offline earnings
 	var saved_at: int = int(parsed.get("saved_at", 0))
 	if saved_at > 0:
@@ -293,6 +413,8 @@ func reset_game() -> void:
 	venue_counts = {}
 	upgrades_purchased = {}
 	vips_recruited = {}
+	staff_counts = {}
+	_auto_click_acc = 0.0
 	_rebuild_rates()
 	game_reset.emit()
 	money_changed.emit(money)

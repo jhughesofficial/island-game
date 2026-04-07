@@ -2,6 +2,7 @@ extends ScrollContainer
 
 @onready var list: VBoxContainer = $MarginContainer/VBoxContainer
 var _data_node: Node
+var _last_sig: String = ""
 
 func _ready() -> void:
 	_data_node = load("res://scripts/data/VIPData.gd").new()
@@ -16,7 +17,15 @@ func _clear_list() -> void:
 		list.remove_child(child)
 		child.queue_free()
 
+func _get_sig() -> String:
+	var parts: Array = []
+	for vip in _data_node.VIPS:
+		if not GameState.vips_recruited.get(vip.id, false) and GameState.vip_is_available(vip.id):
+			parts.append(vip.id)
+	return ",".join(parts)
+
 func _refresh_list() -> void:
+	_last_sig = _get_sig()
 	_clear_list()
 	var next_locked: Dictionary = {}
 	var last_shown_name: String = ""
@@ -120,7 +129,9 @@ func _on_recruit(vip_id: String) -> void:
 	GameState.recruit_vip(vip_id)
 
 func _on_lifetime_changed(_amount: float) -> void:
-	_refresh_list()
+	var sig := _get_sig()
+	if sig != _last_sig:
+		_refresh_list()
 
 func _on_vip_recruited(_id: String) -> void:
 	_refresh_list()

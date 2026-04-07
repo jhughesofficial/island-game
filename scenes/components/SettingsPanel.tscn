@@ -18,6 +18,9 @@ theme_override_font_sizes/font_size = 18
 [node name="CloseBtn" type="Button" parent="VBoxContainer/HBoxContainer"]
 text = "✕"
 
+[node name="MainMenuBtn" type="Button" parent="VBoxContainer"]
+text = "Main Menu"
+
 [node name="ResetBtn" type="Button" parent="VBoxContainer"]
 text = "Reset Save"
 
