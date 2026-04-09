@@ -20,6 +20,10 @@ func _ready() -> void:
 func show_panel() -> void:
 	_refresh()
 	show()
+	$Panel.scale = Vector2(0.92, 0.92)
+	$Panel.pivot_offset = $Panel.size / 2
+	var tween := create_tween()
+	tween.tween_property($Panel, "scale", Vector2(1.0, 1.0), 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 func _refresh() -> void:
 	total_earned_val.text = NumberFormatter.format(GameState.lifetime_money)

@@ -12,6 +12,19 @@ func _ready() -> void:
 	continue_btn.pressed.connect(_on_continue)
 	how_to_play_btn.pressed.connect(func(): help_panel.show_panel())
 	quit_btn.pressed.connect(_on_quit)
+	_setup_button_hover(new_game_btn)
+	_setup_button_hover(continue_btn)
+	_setup_button_hover(how_to_play_btn)
+	_setup_button_hover(quit_btn)
+
+func _setup_button_hover(btn: Button) -> void:
+	btn.pivot_offset = btn.custom_minimum_size / 2
+	btn.mouse_entered.connect(func(): _animate_btn(btn, Vector2(1.03, 1.03)))
+	btn.mouse_exited.connect(func(): _animate_btn(btn, Vector2(1.0, 1.0)))
+
+func _animate_btn(btn: Button, target_scale: Vector2) -> void:
+	var tween := create_tween()
+	tween.tween_property(btn, "scale", target_scale, 0.1)
 
 func _on_new_game() -> void:
 	var save_path := OS.get_user_data_dir() + "/save.json"
