@@ -6,6 +6,7 @@ var lifetime_money: float = 0.0
 var political_influence: int = 0
 var heat: float = 0.0          # 0.0 – 5.0; 5.0 = CRITICAL
 var last_save_unix: int = 0    # Unix timestamp of last save
+var secrets_found: int = 0
 
 # { venue_id: int }
 var venue_counts: Dictionary = {}
@@ -29,6 +30,7 @@ signal game_over_triggered(ending: String)
 signal arrest_countdown_changed(seconds: float)
 signal offline_earnings_received(amount: float)
 signal game_reset()
+signal secret_found(secret_id: String)
 
 # ── Cached Rates (rebuilt on state change) ──────────────────────
 var _income_per_second: float = 0.0
@@ -185,6 +187,12 @@ func recruit_vip(vip_id: String) -> bool:
 	pi_changed.emit(political_influence)
 	if vip.effect == "heat_reduce_1":
 		heat = maxf(0.0, heat - 1.0)
+		heat_changed.emit(heat)
+	elif vip.effect == "heat_reduce_2":
+		heat = maxf(0.0, heat - 2.0)
+		heat_changed.emit(heat)
+	elif vip.effect == "heat_reduce_3":
+		heat = maxf(0.0, heat - 3.0)
 		heat_changed.emit(heat)
 	vip_recruited.emit(vip_id)
 	_rebuild_rates()
@@ -362,6 +370,7 @@ func save_game() -> void:
 		"upgrades_purchased": upgrades_purchased,
 		"vips_recruited": vips_recruited,
 		"staff_counts": staff_counts,
+		"secrets_found": secrets_found,
 		"saved_at": Time.get_unix_time_from_system()
 	}
 	var file = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
@@ -388,6 +397,7 @@ func load_game() -> void:
 	upgrades_purchased = parsed.get("upgrades_purchased", {})
 	vips_recruited = parsed.get("vips_recruited", {})
 	staff_counts = parsed.get("staff_counts", {})
+	secrets_found = int(parsed.get("secrets_found", 0))
 	# Offline earnings
 	var saved_at: int = int(parsed.get("saved_at", 0))
 	if saved_at > 0:
@@ -414,6 +424,7 @@ func reset_game() -> void:
 	upgrades_purchased = {}
 	vips_recruited = {}
 	staff_counts = {}
+	secrets_found = 0
 	_auto_click_acc = 0.0
 	_rebuild_rates()
 	game_reset.emit()

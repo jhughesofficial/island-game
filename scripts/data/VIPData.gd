@@ -42,5 +42,45 @@ const VIPS: Array = [
 		"pi_award": 80,
 		"flavor": "His lawyers are on retainer.",
 		"effect": "none"
+	},
+	{
+		"id": "academic",
+		"name": "The Academic",
+		"appears_at": 5000000.0,
+		"cost": 3000000.0,
+		"multiplier": 1.4,
+		"pi_award": 20,
+		"flavor": "Lends credibility. Asks no questions.",
+		"effect": ""
+	},
+	{
+		"id": "socialite",
+		"name": "The Socialite",
+		"appears_at": 15000000.0,
+		"cost": 8000000.0,
+		"multiplier": 1.6,
+		"pi_award": 25,
+		"flavor": "Everyone wants to meet her. She arranges it.",
+		"effect": ""
+	},
+	{
+		"id": "general",
+		"name": "The General",
+		"appears_at": 30000000.0,
+		"cost": 20000000.0,
+		"multiplier": 1.8,
+		"pi_award": 35,
+		"flavor": "National security is a flexible concept.",
+		"effect": "heat_reduce_2"
+	},
+	{
+		"id": "sovereign",
+		"name": "The Sovereign",
+		"appears_at": 80000000.0,
+		"cost": 50000000.0,
+		"multiplier": 2.5,
+		"pi_award": 50,
+		"flavor": "Diplomatic immunity. For everyone.",
+		"effect": "heat_reduce_3"
 	}
 ]

@@ -16,15 +16,50 @@ const ACT1_HEADLINES: Array[String] = [
 	"PRIVATE JET ARRIVALS UP 300% — ISLAND HOST BECOMES SOUGHT-AFTER DESTINATION",
 ]
 
-@onready var ticker_label: Label = $MarginContainer/TickerLabel
+# Act 2 headlines — increasingly suspicious, implications of something darker
+const ACT2_HEADLINES: Array[String] = [
+	"SOURCES: ISLAND HOST REQUIRES SIGNED DISCRETION AGREEMENTS FROM ALL GUESTS",
+	"UNDISCLOSED GUESTS ARRIVE UNDER COVER OF NIGHT AT REMOTE ISLAND COMPOUND",
+	"FINANCIER'S PRIVATE ARRANGEMENTS DESCRIBED AS 'MUTUALLY BENEFICIAL' BY INSIDERS",
+	"EXCLUSIVE CLIENTELE VETTED THROUGH UNNAMED INTERMEDIARIES, SOURCES SAY",
+	"ISLAND OPERATION EXPANDS WITH ADDITIONAL STAFF SWORN TO CONFIDENTIALITY",
+	"CERTAIN FAVORS EXCHANGED AT ELITE GATHERINGS, FORMER ATTENDEE CLAIMS",
+	"HIGH-PROFILE VISITORS TRAVEL WITHOUT SECURITY DETAIL OR OFFICIAL RECORD",
+	"DISCRETION IS OUR BUSINESS: ISLAND STAFF REPORTEDLY SIGN MULTI-DECADE NDAs",
+	"FLIGHT LOGS SHOW UNNAMED PASSENGERS ABOARD PRIVATE AIRCRAFT — NO MANIFESTS FILED",
+	"ISLAND COMPOUND REPORTEDLY OFF-LIMITS TO LOCAL AUTHORITIES WITHOUT INVITATION",
+]
+
+# Act 3 headlines — breaking news, federal investigation
+const ACT3_HEADLINES: Array[String] = [
+	"BREAKING: FEDERAL INVESTIGATION OPENED INTO ISLAND OPERATION",
+	"SOURCES: ISLAND ACTIVITIES UNDER SCRUTINY BY MULTIPLE AGENCIES",
+	"DOJ PROBE: HIGH-PROFILE NAMES SOUGHT IN CONNECTION WITH ISLAND COMPOUND",
+	"BREAKING: FORMER GUESTS SUBPOENAED AS INVESTIGATION WIDENS",
+	"FBI SEIZES FLIGHT LOGS FROM PRIVATE AIRCRAFT LINKED TO ISLAND HOST",
+	"SOURCES: FEDERAL AGENTS HAVE REVIEWED YEARS OF UNDISCLOSED GUEST RECORDS",
+	"BREAKING: ISLAND HOST FACES INQUIRY INTO 'PRIVATE ARRANGEMENTS' WITH OFFICIALS",
+	"SENATE HEARING CALLED FOLLOWING ISLAND COMPOUND REVELATIONS",
+	"FORMER STAFF COOPERATING WITH INVESTIGATORS, SOURCES SAY",
+	"BREAKING: ASSETS FROZEN AS AUTHORITIES MOVE AGAINST ISLAND OPERATION",
+]
+
+@onready var ticker_label: Label = /TickerLabel
 
 var _current_index: int = 0
 var _scroll_x: float = 0.0
 var _speed: float = 80.0  # pixels per second
+var _current_act: int = 1
+
+const ACT2_THRESHOLD: float = 1000000.0   # M
+const ACT3_THRESHOLD: float = 50000000.0  # 0M
 
 func _ready() -> void:
-	_current_index = randi() % ACT1_HEADLINES.size()
-	ticker_label.text = "  ★  " + ACT1_HEADLINES[_current_index] + "  ★  " + ACT1_HEADLINES[(_current_index + 1) % ACT1_HEADLINES.size()]
+	GameState.lifetime_money_changed.connect(_on_lifetime_money_changed)
+	_current_act = _act_for(GameState.lifetime_money)
+	var pool := _current_pool()
+	_current_index = randi() % pool.size()
+	ticker_label.text = "  ★  " + pool[_current_index] + "  ★  " + pool[(_current_index + 1) % pool.size()]
 	_scroll_x = 0.0
 
 func _process(delta: float) -> void:
@@ -32,6 +67,30 @@ func _process(delta: float) -> void:
 	ticker_label.position.x = _scroll_x
 	# When the first headline has fully scrolled off, advance and reset
 	if _scroll_x < -ticker_label.size.x * 0.5:
-		_current_index = (_current_index + 1) % ACT1_HEADLINES.size()
-		ticker_label.text = "  ★  " + ACT1_HEADLINES[_current_index] + "  ★  " + ACT1_HEADLINES[(_current_index + 1) % ACT1_HEADLINES.size()]
+		var pool := _current_pool()
+		_current_index = (_current_index + 1) % pool.size()
+		ticker_label.text = "  ★  " + pool[_current_index] + "  ★  " + pool[(_current_index + 1) % pool.size()]
 		_scroll_x = 0.0
+
+func _on_lifetime_money_changed(amount: float) -> void:
+	var new_act := _act_for(amount)
+	if new_act != _current_act:
+		_current_act = new_act
+		# Reset index into the new pool; mid-scroll is fine — next cycle will pick up
+		_current_index = randi() % _current_pool().size()
+
+func _act_for(amount: float) -> int:
+	if amount >= ACT3_THRESHOLD:
+		return 3
+	elif amount >= ACT2_THRESHOLD:
+		return 2
+	return 1
+
+func _current_pool() -> Array[String]:
+	match _current_act:
+		2:
+			return ACT2_HEADLINES
+		3:
+			return ACT3_HEADLINES
+		_:
+			return ACT1_HEADLINES
