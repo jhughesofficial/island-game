@@ -53,6 +53,7 @@ func show_ending(ending: String) -> void:
 			)
 			restart_btn.text = "Play Again"
 			GameState.unlock_ghost_mode()
+			GameState.record_identity_retire()
 			ghost_label.visible = true
 		_:
 			headline.text = "GAME OVER"

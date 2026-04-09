@@ -91,4 +91,40 @@ const ACHIEVEMENTS: Array = [
 		"description": "Reach 100 Political Influence. The law is a suggestion at this point.",
 		"secret": true
 	},
+	{
+		"id": "retire_philanthropist",
+		"name": "Generous to the End",
+		"description": "Retire as The Philanthropist. The foundation will continue your work.",
+		"secret": true
+	},
+	{
+		"id": "retire_financier",
+		"name": "Exit Strategy",
+		"description": "Retire as The Financier. The numbers always worked out in your favor.",
+		"secret": true
+	},
+	{
+		"id": "retire_tech_mogul",
+		"name": "Platform Acquired",
+		"description": "Retire as The Tech Mogul. You disrupted something, alright.",
+		"secret": true
+	},
+	{
+		"id": "retire_diplomat",
+		"name": "Back Channels",
+		"description": "Retire as The Diplomat. Thirty years of IOUs, finally cashed.",
+		"secret": true
+	},
+	{
+		"id": "all_identities",
+		"name": "Many Faces",
+		"description": "Retire successfully with all four identities. Nobody knows who you really are.",
+		"secret": true
+	},
+	{
+		"id": "deep_state_upgrade",
+		"name": "Off the Books",
+		"description": "Purchase 'Deep State'. Some structures are self-maintaining.",
+		"secret": true
+	},
 ]

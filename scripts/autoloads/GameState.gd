@@ -13,9 +13,15 @@ var narrative_events_seen: Array = []
 var heat_scare_survived: bool = false
 var endings_reached: Array = []
 
+# ── Identity (Character Creation) ───────────────────────────────
+var player_identity: String = ""
+var _identity_click_mult: float = 1.0
+var _identity_vip_discount: float = 1.0
+
 # ── Prestige (Ghost Mode) ────────────────────────────────────────
 var ghost_mode: bool = false
 var ghost_multiplier: float = 1.5
+var retired_identities: Array = []  # persists across resets
 
 # { venue_id: int }
 var venue_counts: Dictionary = {}
@@ -205,9 +211,10 @@ func recruit_vip(vip_id: String) -> bool:
 	var vip = _get_vip(vip_id)
 	if vip == null:
 		return false
-	if money < vip.cost:
+	var cost: float = vip.cost * _identity_vip_discount
+	if money < cost:
 		return false
-	money -= vip.cost
+	money -= cost
 	money_changed.emit(money)
 	vips_recruited[vip_id] = true
 	political_influence += vip.pi_award
@@ -317,13 +324,13 @@ func _rebuild_rates() -> void:
 		heat_suppress_total += 0.02
 	_heat_per_second = maxf(0.0, _heat_per_second - heat_suppress_total)
 
-	# Click value: 10% of passive income (min $1), boosted by click upgrades + VIPs
+	# Click value: 10% of passive income (min $1), boosted by click upgrades + VIPs + identity
 	var click_base: float = maxf(1.0, _income_per_second * 0.1)
 	var click_upg_mult: float = 1.0
 	for upg in _upgrade_data.UPGRADES:
 		if upg.type == "click" and upgrades_purchased.get(upg.id, false):
 			click_upg_mult *= upg.multiplier
-	_click_value = click_base * click_upg_mult * _vip_multiplier
+	_click_value = click_base * click_upg_mult * _vip_multiplier * _identity_click_mult
 
 	# Auto-clicks from staff
 	_auto_clicks_per_second = 0.0
@@ -418,6 +425,7 @@ func save_game() -> void:
 		"narrative_events_seen": narrative_events_seen,
 		"heat_scare_survived": heat_scare_survived,
 		"endings_reached": endings_reached,
+		"player_identity": player_identity,
 		"saved_at": Time.get_unix_time_from_system()
 	}
 	var file = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
@@ -453,6 +461,8 @@ func load_game() -> void:
 	narrative_events_seen = parsed.get("narrative_events_seen", [])
 	heat_scare_survived = bool(parsed.get("heat_scare_survived", false))
 	endings_reached = parsed.get("endings_reached", [])
+	player_identity = str(parsed.get("player_identity", ""))
+	_restore_identity_multipliers()
 	# Offline earnings
 	var saved_at: int = int(parsed.get("saved_at", 0))
 	if saved_at > 0:
@@ -492,10 +502,44 @@ func load_prestige() -> void:
 	if parsed == null or not parsed is Dictionary:
 		return
 	ghost_mode = bool(parsed.get("ghost_mode", false))
+	retired_identities = parsed.get("retired_identities", [])
 
 func unlock_ghost_mode() -> void:
 	ghost_mode = true
 	save_prestige()
+
+func record_identity_retire() -> void:
+	if not player_identity.is_empty() and player_identity not in retired_identities:
+		retired_identities.append(player_identity)
+		save_prestige()
+
+# ── Identity ─────────────────────────────────────────────────────
+# Called on new game — sets identity and applies one-time bonus
+func set_player_identity(id: String) -> void:
+	player_identity = id
+	_restore_identity_multipliers()
+	var data_node = load("res://scripts/data/IdentityData.gd").new()
+	for identity in data_node.IDENTITIES:
+		if identity.id == id:
+			match identity.bonus_type:
+				"pi":
+					political_influence += int(identity.bonus_value)
+					pi_changed.emit(political_influence)
+				"money":
+					_add_money(float(identity.bonus_value))
+			break
+	data_node.free()
+
+# Called on load — restores multipliers without re-applying PI/money bonuses
+func _restore_identity_multipliers() -> void:
+	_identity_click_mult = 1.0
+	_identity_vip_discount = 1.0
+	match player_identity:
+		"tech_mogul":
+			_identity_click_mult = 2.0
+		"diplomat":
+			_identity_vip_discount = 0.75
+	_rebuild_rates()
 
 func reset_game() -> void:
 	money = 0.0
@@ -513,6 +557,9 @@ func reset_game() -> void:
 	heat_scare_survived = false
 	endings_reached = []
 	_auto_click_acc = 0.0
+	player_identity = ""
+	_identity_click_mult = 1.0
+	_identity_vip_discount = 1.0
 	_rebuild_rates()
 	game_reset.emit()
 	money_changed.emit(money)

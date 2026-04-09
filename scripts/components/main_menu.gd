@@ -46,10 +46,8 @@ func _on_new_game() -> void:
 		_start_new_game()
 
 func _start_new_game() -> void:
-	var save_path := OS.get_user_data_dir() + "/save.json"
-	if FileAccess.file_exists("user://save.json"):
-		DirAccess.remove_absolute(save_path)
-	get_tree().change_scene_to_file("res://scenes/Main.tscn")
+	GameState.reset_game()
+	get_tree().change_scene_to_file("res://scenes/CharacterCreation.tscn")
 
 func _on_continue() -> void:
 	get_tree().change_scene_to_file("res://scenes/Main.tscn")

@@ -105,6 +105,18 @@ func _is_condition_met(id: String) -> bool:
 			return "retired" in GameState.endings_reached
 		"hundred_pi":
 			return GameState.political_influence >= 100
+		"retire_philanthropist":
+			return "retired" in GameState.endings_reached and GameState.player_identity == "philanthropist"
+		"retire_financier":
+			return "retired" in GameState.endings_reached and GameState.player_identity == "financier"
+		"retire_tech_mogul":
+			return "retired" in GameState.endings_reached and GameState.player_identity == "tech_mogul"
+		"retire_diplomat":
+			return "retired" in GameState.endings_reached and GameState.player_identity == "diplomat"
+		"all_identities":
+			return GameState.retired_identities.size() >= 4
+		"deep_state_upgrade":
+			return GameState.upgrades_purchased.get("deep_state", false)
 	return false
 
 func _save_achievements() -> void:

@@ -146,5 +146,50 @@ const UPGRADES: Array = [
 		"multiplier": 25.0,
 		"unlock_at": 15000000.0,
 		"flavor": "He's handled this before."
+	},
+	{
+		"id": "second_island",
+		"name": "Second Island",
+		"cost": 80000000.0,
+		"type": "blackout",
+		"multiplier": 3.0,
+		"unlock_at": 50000000.0,
+		"flavor": "The first one was practice."
+	},
+	{
+		"id": "sovereign_immunity",
+		"name": "Sovereign Immunity",
+		"cost": 200000000.0,
+		"type": "heat_suppress",
+		"multiplier": 0.06,
+		"unlock_at": 100000000.0,
+		"flavor": "Technically, you don't exist in any jurisdiction."
+	},
+	{
+		"id": "the_vault",
+		"name": "The Vault",
+		"cost": 150000000.0,
+		"type": "political",
+		"multiplier": 3.0,
+		"unlock_at": 80000000.0,
+		"flavor": "Not a bank. Never ask what's inside."
+	},
+	{
+		"id": "deep_state",
+		"name": "Deep State",
+		"cost": 400000000.0,
+		"type": "click",
+		"multiplier": 50.0,
+		"unlock_at": 200000000.0,
+		"flavor": "Some structures are self-maintaining."
+	},
+	{
+		"id": "the_archive",
+		"name": "The Archive",
+		"cost": 600000000.0,
+		"type": "shell",
+		"multiplier": 4.0,
+		"unlock_at": 400000000.0,
+		"flavor": "Everyone has a file. You have everyone's file."
 	}
 ]
