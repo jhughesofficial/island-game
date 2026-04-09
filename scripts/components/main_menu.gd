@@ -23,6 +23,7 @@ func _ready() -> void:
 	_confirm_dialog.ok_button_text = "Start Fresh"
 	_confirm_dialog.cancel_button_text = "Cancel"
 	_confirm_dialog.confirmed.connect(_start_new_game)
+	_confirm_dialog.canceled.connect(_on_new_game_dialog_cancel)
 	add_child(_confirm_dialog)
 	new_game_btn.pressed.connect(_on_new_game)
 	continue_btn.pressed.connect(_on_continue)
@@ -61,9 +62,14 @@ func _start_new_game() -> void:
 func _on_custom_run() -> void:
 	_custom_run_mode = true
 	if FileAccess.file_exists("user://save.json"):
+		_confirm_dialog.dialog_text = "Start a Custom Run? Your current save will be lost."
 		_confirm_dialog.popup_centered()
 	else:
 		_start_new_game()
+
+func _on_new_game_dialog_cancel() -> void:
+	_custom_run_mode = false
+	_confirm_dialog.dialog_text = "Start a new game? Your current progress will be lost."
 
 func _on_continue() -> void:
 	get_tree().change_scene_to_file("res://scenes/Main.tscn")

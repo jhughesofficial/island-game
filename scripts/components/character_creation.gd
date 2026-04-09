@@ -157,6 +157,25 @@ func _update_doll() -> void:
 			break
 	doll_node.queue_redraw()
 
+func _unhandled_input(event: InputEvent) -> void:
+	if not event is InputEventKey or not event.pressed or event.echo:
+		return
+	var ids: Array = _identity_data.IDENTITIES.map(func(i): return i.id)
+	var current_idx: int = ids.find(_selected_id)
+	match event.keycode:
+		KEY_LEFT, KEY_A:
+			var idx: int = (current_idx - 1) % ids.size() if current_idx >= 0 else ids.size() - 1
+			_select_identity(ids[idx])
+			get_viewport().set_input_as_handled()
+		KEY_RIGHT, KEY_D:
+			var idx: int = (current_idx + 1) % ids.size() if current_idx >= 0 else 0
+			_select_identity(ids[idx])
+			get_viewport().set_input_as_handled()
+		KEY_ENTER, KEY_KP_ENTER, KEY_SPACE:
+			if not begin_btn.disabled:
+				_on_begin()
+			get_viewport().set_input_as_handled()
+
 func _on_begin() -> void:
 	if _selected_id.is_empty():
 		return
