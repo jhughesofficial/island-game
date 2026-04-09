@@ -6,7 +6,7 @@ const UPGRADES: Array = [
 	{
 		"id": "champagne",
 		"name": "Champagne Toast",
-		"cost": 100.0,
+		"cost": 60.0,  # was 100; unlocks at $50 lifetime so player only has ~$50 cash — $60 is reachable in ~1 extra min
 		"type": "click",
 		"multiplier": 2.0,
 		"unlock_at": 50.0,

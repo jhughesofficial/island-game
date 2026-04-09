@@ -47,7 +47,7 @@ const VIPS: Array = [
 		"id": "academic",
 		"name": "The Academic",
 		"appears_at": 5000000.0,
-		"cost": 3000000.0,
+		"cost": 2500000.0,  # was 3M (60% of threshold); now 50% — consistent with early VIP cost pattern
 		"multiplier": 1.4,
 		"pi_award": 20,
 		"flavor": "Lends credibility. Asks no questions.",
@@ -67,7 +67,7 @@ const VIPS: Array = [
 		"id": "general",
 		"name": "The General",
 		"appears_at": 30000000.0,
-		"cost": 20000000.0,
+		"cost": 15000000.0,  # was 20M (67% of threshold); now 50% — player needs cash reserves for venues too
 		"multiplier": 1.8,
 		"pi_award": 35,
 		"flavor": "National security is a flexible concept.",
@@ -76,8 +76,8 @@ const VIPS: Array = [
 	{
 		"id": "sovereign",
 		"name": "The Sovereign",
-		"appears_at": 80000000.0,
-		"cost": 50000000.0,
+		"appears_at": 40000000.0,  # was 80M — arrest reveal triggers at $50M, so Sovereign must appear BEFORE that crunch
+		"cost": 20000000.0,        # was 50M (63% of old threshold); now 50% of new threshold — still a major purchase
 		"multiplier": 2.5,
 		"pi_award": 50,
 		"flavor": "Diplomatic immunity. For everyone.",

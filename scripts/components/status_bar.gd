@@ -43,21 +43,29 @@ func _on_pi_changed(pi: int) -> void:
 
 func _on_heat_changed(heat: float) -> void:
 	var stars: int = ceili(heat)
-	var star_str: String = "🔥".repeat(stars) + "·".repeat(5 - stars)
-	heat_label.text = star_str
-	if heat >= 4.0:
-		heat_label.add_theme_color_override("font_color", Color(1, 0.1, 0.1))
-	elif heat >= 2.5:
-		heat_label.add_theme_color_override("font_color", Color(1, 0.5, 0.0))
-	else:
-		heat_label.add_theme_color_override("font_color", Color(0.8, 0.65, 0.2))
+	heat_label.text = "★".repeat(stars) + "☆".repeat(5 - stars)
+	match stars:
+		0:
+			heat_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
+		1:
+			heat_label.add_theme_color_override("font_color", Color(0.2, 0.8, 0.2))
+		2:
+			heat_label.add_theme_color_override("font_color", Color(0.9, 0.85, 0.1))
+		3:
+			heat_label.add_theme_color_override("font_color", Color(1.0, 0.5, 0.0))
+		4:
+			heat_label.add_theme_color_override("font_color", Color(1.0, 0.1, 0.1))
+		5:
+			heat_label.add_theme_color_override("font_color", Color(1.0, 0.1, 0.1))
 
 func _on_arrest_countdown(seconds: float) -> void:
 	if seconds <= 0.0:
 		arrest_label.hide()
+		heat_label.show()
 	else:
 		arrest_label.text = "⚠ ARREST IN %ds" % ceili(seconds)
 		arrest_label.show()
+		heat_label.hide()
 
 func _on_retire_pressed() -> void:
 	GameState.game_over_triggered.emit("retired")

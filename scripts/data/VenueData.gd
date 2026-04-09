@@ -51,7 +51,7 @@ const VENUES: Array = [
 	{
 		"id": "shell",
 		"name": "Shell Corporation",
-		"base_cost": 400000.0,
+		"base_cost": 300000.0,  # was 400k; gap from Offshore ($75k) was 5.3x, now 4x — more digestible
 		"base_income": 300.0,
 		"heat_rate": 0.05,
 		"flavor": "Technically legal.",
@@ -69,7 +69,7 @@ const VENUES: Array = [
 	{
 		"id": "blackout",
 		"name": "Media Blackout",
-		"base_cost": 15000000.0,
+		"base_cost": 10000000.0,  # was 15M; gap from Political Connections ($2M) was 7.5x, now 5x — still feels earned
 		"base_income": 5000.0,
 		"heat_rate": -0.05,
 		"flavor": "Nothing happened here.",
