@@ -8,10 +8,12 @@ var unlocked: Dictionary = {}
 
 var _achievement_data: Node
 var _venue_data: Node
+var _upgrade_data: Node
 
 func _ready() -> void:
 	_achievement_data = load("res://scripts/data/AchievementData.gd").new()
 	_venue_data = load("res://scripts/data/VenueData.gd").new()
+	_upgrade_data = load("res://scripts/data/UpgradeData.gd").new()
 	_load_achievements()
 
 	GameState.money_changed.connect(_on_check)
@@ -122,8 +124,7 @@ func _is_condition_met(id: String) -> bool:
 		"suicide_ending":
 			return "suicide" in GameState.endings_reached
 		"all_upgrades":
-			var upgrade_data = load("res://scripts/data/UpgradeData.gd").new()
-			for upg in upgrade_data.UPGRADES:
+			for upg in _upgrade_data.UPGRADES:
 				if not GameState.upgrades_purchased.get(upg.id, false):
 					return false
 			return true
