@@ -40,6 +40,15 @@ const UPGRADES: Array = [
 		"flavor": "Nobody asks questions during fireworks."
 	},
 	{
+		"id": "the_concierge",
+		"name": "The Concierge",
+		"cost": 1500000.0,
+		"type": "click",
+		"multiplier": 12.0,
+		"unlock_at": 700000.0,
+		"flavor": "He handles logistics. You handle nothing."
+	},
+	{
 		"id": "bonfire_upgrade",
 		"name": "Better Kindling",
 		"cost": 200.0,
@@ -168,7 +177,7 @@ const UPGRADES: Array = [
 	{
 		"id": "the_vault",
 		"name": "The Vault",
-		"cost": 150000000.0,
+		"cost": 100000000.0,  # was 150M — gap from unlock ($80M) was too tight on available cash
 		"type": "political",
 		"multiplier": 3.0,
 		"unlock_at": 80000000.0,

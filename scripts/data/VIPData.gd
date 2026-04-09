@@ -48,7 +48,7 @@ const VIPS: Array = [
 		"name": "The Academic",
 		"appears_at": 5000000.0,
 		"cost": 2500000.0,  # was 3M (60% of threshold); now 50% — consistent with early VIP cost pattern
-		"multiplier": 1.4,
+		"multiplier": 2.0,  # was 1.4 — weakest VIP per dollar at $5M stage
 		"pi_award": 20,
 		"flavor": "Lends credibility. Asks no questions.",
 		"effect": ""
@@ -77,7 +77,7 @@ const VIPS: Array = [
 		"id": "sovereign",
 		"name": "The Sovereign",
 		"appears_at": 40000000.0,  # was 80M — arrest reveal triggers at $50M, so Sovereign must appear BEFORE that crunch
-		"cost": 20000000.0,        # was 50M (63% of old threshold); now 50% of new threshold — still a major purchase
+		"cost": 13000000.0,        # was 20M — tight window before Act 3 crunch at $50M; lowered to give player breathing room
 		"multiplier": 2.5,
 		"pi_award": 50,
 		"flavor": "Diplomatic immunity. For everyone.",

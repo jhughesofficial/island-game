@@ -34,7 +34,7 @@ const VENUES: Array = [
 		"id": "jet",
 		"name": "Private Jet",
 		"base_cost": 10000.0,
-		"base_income": 15.0,
+		"base_income": 22.0,  # was 15 — payback smoothing vs. Villa ($3 income at $1k cost)
 		"heat_rate": 0.02,
 		"flavor": "Travel discreetly.",
 		"sprite": ""
@@ -61,7 +61,7 @@ const VENUES: Array = [
 		"id": "political",
 		"name": "Political Connections",
 		"base_cost": 2000000.0,
-		"base_income": 1200.0,
+		"base_income": 1800.0,  # was 1200 — ROI was weakest of any mid-tier venue
 		"heat_rate": 0.08,
 		"flavor": "Friends in high places.",
 		"sprite": ""
@@ -70,7 +70,7 @@ const VENUES: Array = [
 		"id": "blackout",
 		"name": "Media Blackout",
 		"base_cost": 10000000.0,  # was 15M; gap from Political Connections ($2M) was 7.5x, now 5x — still feels earned
-		"base_income": 5000.0,
+		"base_income": 7000.0,  # was 5000 — heat suppression value was underpriced
 		"heat_rate": -0.05,
 		"flavor": "Nothing happened here.",
 		"sprite": ""
