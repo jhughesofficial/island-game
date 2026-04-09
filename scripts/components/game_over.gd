@@ -10,11 +10,14 @@ extends Control
 @onready var main_menu_btn: Button = $CenterContainer/VBoxContainer/MainMenuBtn
 @onready var center:        CenterContainer = $CenterContainer
 
+var _current_ending: String = ""
+
 func _ready() -> void:
 	restart_btn.pressed.connect(_on_restart)
 	main_menu_btn.pressed.connect(_on_main_menu)
 
 func show_ending(ending: String) -> void:
+	_current_ending = ending
 	match ending:
 		"arrested":
 			headline.text = "ARRESTED"
@@ -96,7 +99,7 @@ func _build_stats() -> String:
 		var idata = load("res://scripts/data/IdentityData.gd").new()
 		for identity in idata.IDENTITIES:
 			if identity.id == GameState.player_identity:
-				identity_line = "\n• Cover:           %s" % identity.name
+				identity_line = "\n• Cover:           %s" % identity.cover
 				break
 		idata.free()
 
@@ -122,7 +125,11 @@ func _play_entrance() -> void:
 
 func _on_restart() -> void:
 	GameState.reset_game()
-	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
+	# After a retire win with ghost_mode unlocked, offer Custom Run directly
+	if _current_ending == "retired" and GameState.ghost_mode:
+		get_tree().change_scene_to_file("res://scenes/CharacterCreation.tscn")
+	else:
+		get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
 
 func _on_main_menu() -> void:
 	GameState.reset_game()
