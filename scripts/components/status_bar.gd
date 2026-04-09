@@ -91,7 +91,7 @@ func _on_arrest_countdown(seconds: float) -> void:
 		heat_label.hide()
 
 func _on_retire_pressed() -> void:
-	GameState.game_over_triggered.emit("retired")
+	GameState.trigger_game_over("retired")
 
 func _add_identity_badge() -> void:
 	if GameState.player_identity.is_empty():

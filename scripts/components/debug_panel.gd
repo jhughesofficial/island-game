@@ -57,10 +57,10 @@ func _on_add_pi() -> void:
 	GameState.pi_changed.emit(GameState.political_influence)
 
 func _on_test_retire() -> void:
-	GameState.game_over_triggered.emit("retired")
+	GameState.trigger_game_over("retired")
 
 func _on_test_suicide() -> void:
-	GameState.game_over_triggered.emit("suicide")
+	GameState.trigger_game_over("suicide")
 
 func _on_trigger_secret() -> void:
 	var island_map = get_tree().get_first_node_in_group("island_map")

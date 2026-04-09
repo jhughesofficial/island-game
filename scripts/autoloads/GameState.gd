@@ -121,7 +121,7 @@ func _check_critical(delta: float) -> void:
 			_critical_timer -= delta
 			arrest_countdown_changed.emit(_critical_timer)
 			if _critical_timer <= 0.0:
-				game_over_triggered.emit("arrested")
+				trigger_game_over("arrested")
 	else:
 		if _is_critical:
 			arrest_countdown_changed.emit(0.0)
@@ -524,6 +524,12 @@ func load_prestige() -> void:
 		return
 	ghost_mode = bool(parsed.get("ghost_mode", false))
 	retired_identities = parsed.get("retired_identities", [])
+
+func trigger_game_over(ending: String) -> void:
+	# Append BEFORE emitting so AchievementManager.check_all() sees the ending.
+	if ending not in endings_reached:
+		endings_reached.append(ending)
+	game_over_triggered.emit(ending)
 
 func unlock_ghost_mode() -> void:
 	ghost_mode = true
