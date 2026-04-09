@@ -100,10 +100,10 @@ func _process(delta: float) -> void:
 
 # ── Tick ─────────────────────────────────────────────────────────
 func _tick_income(delta: float) -> void:
-	if _income_per_second == 0.0:
+	var ips: float = get_income_per_second()
+	if ips == 0.0:
 		return
-	var earned: float = _income_per_second * delta
-	_add_money(earned)
+	_add_money(ips * delta)
 
 func _tick_heat(delta: float) -> void:
 	if _heat_per_second == 0.0:
@@ -340,10 +340,22 @@ func _rebuild_rates() -> void:
 			_auto_clicks_per_second += staff.clicks_per_second * count
 
 func get_income_per_second() -> float:
-	return _income_per_second
+	return _income_per_second * _get_heat_income_mult()
 
 func get_heat_per_second() -> float:
 	return _heat_per_second
+
+# Heat 3 = -10% income; heat 4+ = -25% income (per design spec)
+func _get_heat_income_mult() -> float:
+	if heat >= 4.0:
+		return 0.75
+	elif heat >= 3.0:
+		return 0.90
+	return 1.0
+
+# Heat 4+ = VIP costs ×3 (per design spec)
+func _get_heat_vip_mult() -> float:
+	return 3.0 if heat >= 4.0 else 1.0
 
 func get_click_value() -> float:
 	return _click_value
@@ -396,7 +408,7 @@ func vip_cost(vip_id: String) -> float:
 	var vip = _get_vip(vip_id)
 	if vip == null:
 		return 0.0
-	return vip.cost * _identity_vip_discount
+	return vip.cost * _identity_vip_discount * _get_heat_vip_mult()
 
 func vip_is_available(vip_id: String) -> bool:
 	var vip = _get_vip(vip_id)

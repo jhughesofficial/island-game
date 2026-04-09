@@ -9,6 +9,7 @@ func _ready() -> void:
 	GameState.lifetime_money_changed.connect(_on_lifetime_changed)
 	GameState.vip_recruited.connect(_on_vip_recruited)
 	GameState.money_changed.connect(_on_money_changed)
+	GameState.heat_changed.connect(_on_heat_changed)
 	GameState.game_reset.connect(_refresh_list)
 	_refresh_list()
 
@@ -167,6 +168,14 @@ func _on_lifetime_changed(_amount: float) -> void:
 
 func _on_vip_recruited(_id: String) -> void:
 	_refresh_list()
+
+var _last_heat_tier: int = 0
+
+func _on_heat_changed(heat: float) -> void:
+	var tier: int = 1 if heat >= 4.0 else 0
+	if tier != _last_heat_tier:
+		_last_heat_tier = tier
+		_refresh_list()  # prices changed, rebuild
 
 func _on_money_changed(money: float) -> void:
 	for vip in _data_node.VIPS:
