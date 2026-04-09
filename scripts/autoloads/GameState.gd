@@ -59,7 +59,22 @@ const HEAT_CRITICAL_COUNTDOWN: float = 60.0
 var _critical_timer: float = 0.0
 var _is_critical: bool = false
 
+# ── Focus / Pause ────────────────────────────────────────────────
+var _focus_lost_at: int = 0
+
 # ── Lifecycle ────────────────────────────────────────────────────
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		set_process(false)
+		_focus_lost_at = int(Time.get_unix_time_from_system())
+	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
+		if _focus_lost_at > 0:
+			var elapsed: int = int(Time.get_unix_time_from_system()) - _focus_lost_at
+			if elapsed > 0:
+				_add_money(_income_per_second * elapsed)
+			_focus_lost_at = 0
+		set_process(true)
+
 func _ready() -> void:
 	_venue_data = load("res://scripts/data/VenueData.gd").new()
 	_vip_data = load("res://scripts/data/VIPData.gd").new()
