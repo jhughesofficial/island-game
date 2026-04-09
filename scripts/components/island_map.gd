@@ -117,6 +117,11 @@ func _ready() -> void:
 	_setup_seagull()
 	_schedule_next_seagull()
 	_setup_guest_count_label()
+	_setup_tv_overlay()
+
+func _setup_tv_overlay() -> void:
+	var tv = load("res://scripts/components/tv_overlay.gd").new()
+	add_child(tv)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not event is InputEventKey:
