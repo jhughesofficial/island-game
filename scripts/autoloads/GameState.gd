@@ -335,6 +335,9 @@ func _rebuild_rates() -> void:
 func get_income_per_second() -> float:
 	return _income_per_second
 
+func get_heat_per_second() -> float:
+	return _heat_per_second
+
 func get_click_value() -> float:
 	return _click_value
 
