@@ -49,4 +49,22 @@ const EVENTS: Array = [
 		"title": "The Subpoena",
 		"body": "A federal courier arrives at the mainland office. Your attorney intercepts it. He assures you it's a fishing expedition. He does not look certain."
 	},
+	{
+		"id": "the_photograph",
+		"trigger_at": 42_000_000.0,
+		"title": "The Photograph",
+		"body": "A journalist publishes a photograph taken from a boat. The dock is visible. So is a face. Your attorney issues a denial. Denials rarely help."
+	},
+	{
+		"id": "the_arrangement",
+		"trigger_at": 75_000_000.0,
+		"title": "The Arrangement",
+		"body": "Three witnesses have changed their stories. The case is weakening. You don't ask how. You wire the amount your attorney suggested and do not keep the receipt."
+	},
+	{
+		"id": "the_exit",
+		"trigger_at": 200_000_000.0,
+		"title": "The Exit",
+		"body": "Your second passport arrived last week. The plane is fueled. You've been here before — not geographically, but in terms of knowing when to leave. You're not leaving yet."
+	},
 ]

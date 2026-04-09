@@ -7,9 +7,11 @@ const SAVE_PATH: String = "user://achievements.json"
 var unlocked: Dictionary = {}
 
 var _achievement_data: Node
+var _venue_data: Node
 
 func _ready() -> void:
 	_achievement_data = load("res://scripts/data/AchievementData.gd").new()
+	_venue_data = load("res://scripts/data/VenueData.gd").new()
 	_load_achievements()
 
 	GameState.money_changed.connect(_on_check)
@@ -44,8 +46,8 @@ func _on_game_over(_ending) -> void:
 	check_all()
 
 func _on_game_reset() -> void:
-	unlocked = {}
-	_save_achievements()
+	# Achievements persist across resets (like Ghost Mode prestige).
+	# Re-check conditions in case any new ones unlock immediately after reset.
 	check_all()
 
 func check_all() -> void:
@@ -80,10 +82,8 @@ func _is_condition_met(id: String) -> bool:
 					owned_types += 1
 			return owned_types >= 5
 		"all_venues":
-			if GameState.venue_counts.size() < 8:
-				return false
-			for v in GameState.venue_counts.values():
-				if v == 0:
+			for venue in _venue_data.VENUES:
+				if GameState.venue_counts.get(venue.id, 0) == 0:
 					return false
 			return true
 		"first_vip":
