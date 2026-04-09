@@ -28,6 +28,7 @@ func _ready() -> void:
 		ghost_badge.add_theme_font_size_override("font_size", 12)
 		$MarginContainer/HBoxContainer.add_child(ghost_badge)
 		$MarginContainer/HBoxContainer.move_child(ghost_badge, 1)
+	_add_identity_badge()
 	_refresh_all()
 
 func _process(delta: float) -> void:
@@ -85,6 +86,21 @@ func _on_arrest_countdown(seconds: float) -> void:
 
 func _on_retire_pressed() -> void:
 	GameState.game_over_triggered.emit("retired")
+
+func _add_identity_badge() -> void:
+	if GameState.player_identity.is_empty():
+		return
+	var identity_data = load("res://scripts/data/IdentityData.gd").new()
+	for identity in identity_data.IDENTITIES:
+		if identity.id == GameState.player_identity:
+			var badge := Label.new()
+			badge.text = identity.cover
+			badge.add_theme_color_override("font_color", identity.accent_color)
+			badge.add_theme_font_size_override("font_size", 11)
+			$MarginContainer/HBoxContainer.add_child(badge)
+			$MarginContainer/HBoxContainer.move_child(badge, 1)
+			break
+	identity_data.free()
 
 func _on_settings_btn_pressed() -> void:
 	get_parent()._on_settings_button_pressed()

@@ -67,4 +67,22 @@ const EVENTS: Array = [
 		"title": "The Exit",
 		"body": "Your second passport arrived last week. The plane is fueled. You've been here before — not geographically, but in terms of knowing when to leave. You're not leaving yet."
 	},
+	{
+		"id": "the_deposition",
+		"trigger_at": 300_000_000.0,
+		"title": "The Deposition",
+		"body": "Your attorney hands you a sixty-page document. You don't read it — that's what attorneys are for. He tells you to keep all travel documents accessible. He tells you not to ask why."
+	},
+	{
+		"id": "the_files",
+		"trigger_at": 400_000_000.0,
+		"title": "The Files",
+		"body": "The archive is extensive. Photographs. Logs. Accounts. You have a file on everyone — every judge, every prosecutor, every senator who ever took a boat ride. The files are why you're still here."
+	},
+	{
+		"id": "the_network",
+		"trigger_at": 500_000_000.0,
+		"title": "The Network",
+		"body": "This was never just an island. It was infrastructure. The guests understood that. The money flows in one direction, the influence in another. You've built something that will outlast you."
+	},
 ]

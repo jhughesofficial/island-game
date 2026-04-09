@@ -91,13 +91,22 @@ func _build_stats() -> String:
 	else:
 		time_str = "%dm" % mins
 
+	var identity_line: String = ""
+	if not GameState.player_identity.is_empty():
+		var idata = load("res://scripts/data/IdentityData.gd").new()
+		for identity in idata.IDENTITIES:
+			if identity.id == GameState.player_identity:
+				identity_line = "\n• Cover:           %s" % identity.name
+				break
+		idata.free()
+
 	var lines: Array = [
 		"• Total earned:    %s" % NumberFormatter.format(GameState.lifetime_money),
 		"• Venues built:    %d" % venues_total,
-		"• Upgrades:        %d / 16" % upgrades_total,
+		"• Upgrades:        %d / 22" % upgrades_total,
 		"• VIPs recruited:  %d / 8" % vips_total,
 		"• Secrets found:   %d" % GameState.secrets_found,
-		"• Time played:     %s" % time_str,
+		"• Time played:     %s%s" % [time_str, identity_line],
 	]
 	return "\n".join(lines)
 
@@ -113,7 +122,7 @@ func _play_entrance() -> void:
 
 func _on_restart() -> void:
 	GameState.reset_game()
-	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
+	get_tree().change_scene_to_file("res://scenes/CharacterCreation.tscn")
 
 func _on_main_menu() -> void:
 	GameState.reset_game()
