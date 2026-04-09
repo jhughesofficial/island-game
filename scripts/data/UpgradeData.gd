@@ -92,5 +92,59 @@ const UPGRADES: Array = [
 		"multiplier": 1.0,
 		"unlock_at": 250000.0,
 		"flavor": "A generous gift. No receipt."
+	},
+	{
+		"id": "offshore_upgrade",
+		"name": "Nested Accounts",
+		"cost": 300000.0,
+		"type": "offshore",
+		"multiplier": 2.0,
+		"unlock_at": 150000.0,
+		"flavor": "The money moves in circles. That's the point."
+	},
+	{
+		"id": "shell_upgrade",
+		"name": "Notional Transfer",
+		"cost": 1200000.0,
+		"type": "shell",
+		"multiplier": 2.0,
+		"unlock_at": 600000.0,
+		"flavor": "Technically, nothing changed."
+	},
+	{
+		"id": "political_upgrade",
+		"name": "The Right Friends",
+		"cost": 6000000.0,
+		"type": "political",
+		"multiplier": 2.0,
+		"unlock_at": 3000000.0,
+		"flavor": "A phone call is worth a thousand lawyers."
+	},
+	{
+		"id": "blackout_upgrade",
+		"name": "Total Suppression",
+		"cost": 30000000.0,
+		"type": "blackout",
+		"multiplier": 2.0,
+		"unlock_at": 15000000.0,
+		"flavor": "The story was never there."
+	},
+	{
+		"id": "private_security",
+		"name": "Private Security",
+		"cost": 5000000.0,
+		"type": "click",
+		"multiplier": 15.0,
+		"unlock_at": 2000000.0,
+		"flavor": "They don't talk. That's what you're paying for."
+	},
+	{
+		"id": "the_cleaner",
+		"name": "The Cleaner",
+		"cost": 30000000.0,
+		"type": "click",
+		"multiplier": 25.0,
+		"unlock_at": 15000000.0,
+		"flavor": "He's handled this before."
 	}
 ]

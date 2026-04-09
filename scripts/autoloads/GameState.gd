@@ -8,6 +8,7 @@ var heat: float = 0.0          # 0.0 – 5.0; 5.0 = CRITICAL
 var last_save_unix: int = 0    # Unix timestamp of last save
 var secrets_found: int = 0
 var act3_revealed: bool = false
+var narrative_events_seen: Array = []
 
 # { venue_id: int }
 var venue_counts: Dictionary = {}
@@ -373,6 +374,7 @@ func save_game() -> void:
 		"staff_counts": staff_counts,
 		"secrets_found": secrets_found,
 		"act3_revealed": act3_revealed,
+		"narrative_events_seen": narrative_events_seen,
 		"saved_at": Time.get_unix_time_from_system()
 	}
 	var file = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
@@ -401,6 +403,7 @@ func load_game() -> void:
 	staff_counts = parsed.get("staff_counts", {})
 	secrets_found = int(parsed.get("secrets_found", 0))
 	act3_revealed = bool(parsed.get("act3_revealed", false))
+	narrative_events_seen = parsed.get("narrative_events_seen", [])
 	# Offline earnings
 	var saved_at: int = int(parsed.get("saved_at", 0))
 	if saved_at > 0:
@@ -429,6 +432,7 @@ func reset_game() -> void:
 	staff_counts = {}
 	secrets_found = 0
 	act3_revealed = false
+	narrative_events_seen = []
 	_auto_click_acc = 0.0
 	_rebuild_rates()
 	game_reset.emit()

@@ -8,8 +8,11 @@ extends Control
 @onready var save_timer: Timer = $SaveTimer
 @onready var toast: Control = $Toast
 @onready var breaking_news_modal: Control = $BreakingNewsModal
+@onready var narrative_modal: Control = $NarrativeEventModal
 
 const ACT3_THRESHOLD: float = 50_000_000.0
+
+var _narrative_data = load("res://scripts/data/NarrativeEventData.gd").new()
 
 func _ready() -> void:
 	game_over_overlay.hide()
@@ -36,6 +39,20 @@ func _on_lifetime_money_changed(amount: float) -> void:
 		GameState.act3_revealed = true
 		GameState.save_game()
 		breaking_news_modal.show_modal()
+	_check_narrative_events(amount)
+
+func _check_narrative_events(amount: float) -> void:
+	var best_event: Dictionary = {}
+	var best_threshold: float = -1.0
+	for event in _narrative_data.EVENTS:
+		if event.trigger_at <= amount and event.id not in GameState.narrative_events_seen:
+			if event.trigger_at > best_threshold:
+				best_threshold = event.trigger_at
+				best_event = event
+	if not best_event.is_empty():
+		GameState.narrative_events_seen.append(best_event.id)
+		GameState.save_game()
+		narrative_modal.show_event(best_event)
 
 func _on_settings_button_pressed() -> void:
 	settings_panel.visible = not settings_panel.visible

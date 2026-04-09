@@ -1,0 +1,61 @@
+[gd_scene format=3 uid="uid://narrative_event_modal"]
+
+[ext_resource type="Script" path="res://scripts/components/narrative_event_modal.gd" id="1"]
+
+[node name="NarrativeEventModal" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("1")
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.75)
+mouse_filter = 0
+
+[node name="CenterContainer" type="CenterContainer" parent="Overlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Panel" type="PanelContainer" parent="Overlay/CenterContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(480, 280)
+
+[node name="VBox" type="VBoxContainer" parent="Overlay/CenterContainer/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TitleLabel" type="Label" parent="Overlay/CenterContainer/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1.0, 0.84, 0.0, 1)
+theme_override_font_sizes/font_size = 18
+text = ""
+horizontal_alignment = 1
+
+[node name="Divider" type="HSeparator" parent="Overlay/CenterContainer/Panel/VBox"]
+layout_mode = 2
+
+[node name="BodyLabel" type="Label" parent="Overlay/CenterContainer/Panel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.75, 0.75, 0.75, 1)
+theme_override_font_sizes/font_size = 13
+text = ""
+autowrap_mode = 2
+
+[node name="Spacer" type="Control" parent="Overlay/CenterContainer/Panel/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 8)
+
+[node name="NotedButton" type="Button" parent="Overlay/CenterContainer/Panel/VBox"]
+layout_mode = 2
+text = "Noted."
+
+[connection signal="pressed" from="Overlay/CenterContainer/Panel/VBox/NotedButton" to="." method="_on_noted_pressed"]
