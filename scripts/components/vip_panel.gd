@@ -29,11 +29,27 @@ func _refresh_list() -> void:
 	_clear_list()
 	var next_locked: Dictionary = {}
 	var last_shown_name: String = ""
+	var has_recruited: bool = false
+	var has_available: bool = false
+
+	# First pass: count sections so we know whether to insert a separator
+	for vip in _data_node.VIPS:
+		if GameState.vips_recruited.get(vip.id, false):
+			has_recruited = true
+		elif GameState.vip_is_available(vip.id):
+			has_available = true
+
+	var separator_added: bool = false
 	for vip in _data_node.VIPS:
 		if GameState.vips_recruited.get(vip.id, false):
 			list.add_child(_make_recruited_row(vip))
 			last_shown_name = vip.name
 			continue
+		if not separator_added and has_recruited and has_available:
+			var sep := HSeparator.new()
+			sep.add_theme_constant_override("separation", 6)
+			list.add_child(sep)
+			separator_added = true
 		if GameState.vip_is_available(vip.id):
 			list.add_child(_make_row(vip))
 			last_shown_name = vip.name
@@ -41,6 +57,14 @@ func _refresh_list() -> void:
 			next_locked = vip
 	if not next_locked.is_empty():
 		list.add_child(_make_mystery_row(last_shown_name))
+
+func _parse_heat_reduce(effect: String) -> int:
+	if not effect.begins_with("heat_reduce_"):
+		return 0
+	var parts := effect.split("_")
+	if parts.size() < 3:
+		return 0
+	return parts[2].to_int()
 
 func _make_row(vip: Dictionary) -> HBoxContainer:
 	var row := HBoxContainer.new()
@@ -56,7 +80,11 @@ func _make_row(vip: Dictionary) -> HBoxContainer:
 	name_lbl.add_theme_font_size_override("font_size", 15)
 	info.add_child(name_lbl)
 	var sub_lbl := Label.new()
-	sub_lbl.text = "%s  |  x%.1f earnings  |  +%d PI" % [vip.flavor, vip.multiplier, vip.pi_award]
+	var sub_text := "%s  |  x%.1f earnings  |  +%d PI" % [vip.flavor, vip.multiplier, vip.pi_award]
+	var heat_val := _parse_heat_reduce(vip.get("effect", ""))
+	if heat_val > 0:
+		sub_text += "  |  -%d heat" % heat_val
+	sub_lbl.text = sub_text
 	sub_lbl.add_theme_font_size_override("font_size", 11)
 	sub_lbl.modulate = Color(0.7, 0.7, 0.7)
 	info.add_child(sub_lbl)
@@ -86,7 +114,7 @@ func _make_recruited_row(vip: Dictionary) -> HBoxContainer:
 	name_lbl.add_theme_font_size_override("font_size", 15)
 	info.add_child(name_lbl)
 	var sub_lbl := Label.new()
-	sub_lbl.text = vip.flavor
+	sub_lbl.text = "✓ Active  |  x%.1f  |  +%d PI earned" % [vip.multiplier, vip.pi_award]
 	sub_lbl.add_theme_font_size_override("font_size", 11)
 	info.add_child(sub_lbl)
 	row.add_child(info)

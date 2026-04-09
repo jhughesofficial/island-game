@@ -30,6 +30,16 @@ const SECRET_LIFETIME:      float  = 15.0
 const SECRET_SPAWN_MIN:     float  = 30.0
 const SECRET_SPAWN_MAX:     float  = 90.0
 
+# Seagull timing
+const SEAGULL_INTERVAL_MIN: float = 45.0
+const SEAGULL_INTERVAL_MAX: float = 90.0
+const SEAGULL_FLY_MIN:      float = 8.0
+const SEAGULL_FLY_MAX:      float = 12.0
+
+# Ocean shimmer colours
+const OCEAN_COLOR_DARK:  Color = Color(0.04, 0.12, 0.22, 1.0)
+const OCEAN_COLOR_LIGHT: Color = Color(0.05, 0.15, 0.27, 1.0)
+
 # Margin so buttons don't clip the island edge (normalised units)
 const SECRET_MARGIN: float = 0.10
 
@@ -58,12 +68,15 @@ const SHADOW_OFFSET: Vector2 = Vector2(4.0, 6.0)
 @onready var venues_layer:   Control        = $VenuesLayer
 @onready var throw_btn:      Button         = $ThrowPartyBtn
 @onready var particles:      CPUParticles2D = $CPUParticles2D
+@onready var ocean_bg:       ColorRect      = $OceanBg
 
 var _venue_nodes:      Dictionary = {}
 var _secret_timer:     float      = 0.0
 var _active_secret:    Control    = null
 var _secret_data:      Node       = null
 var _staff_rate_label: Label      = null
+var _seagull_timer:    float      = 0.0
+var _seagull_label:    Label      = null
 
 func _ready() -> void:
 	add_to_group("island_map")
@@ -78,6 +91,9 @@ func _ready() -> void:
 	_setup_staff_rate_label()
 	if GameState.has_signal("staff_count_changed"):
 		GameState.staff_count_changed.connect(_on_staff_count_changed)
+	_start_ocean_shimmer()
+	_setup_seagull()
+	_schedule_next_seagull()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not event is InputEventKey:
@@ -136,11 +152,79 @@ func _on_staff_count_changed(_count: int) -> void:
 	_update_staff_rate_label()
 
 func _process(delta: float) -> void:
-	if _active_secret != null:
-		return
-	_secret_timer -= delta
-	if _secret_timer <= 0.0:
-		_spawn_secret()
+	# Secret spawning
+	if _active_secret == null:
+		_secret_timer -= delta
+		if _secret_timer <= 0.0:
+			_spawn_secret()
+
+	# Seagull spawning
+	if _seagull_label == null:
+		_seagull_timer -= delta
+		if _seagull_timer <= 0.0:
+			_fly_seagull()
+
+# ── Ocean shimmer ─────────────────────────────────────────────────────────────
+
+func _start_ocean_shimmer() -> void:
+	var tween := create_tween()
+	tween.set_loops()
+	tween.tween_property(ocean_bg, "color", OCEAN_COLOR_LIGHT, 3.0) \
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tween.tween_property(ocean_bg, "color", OCEAN_COLOR_DARK, 3.0) \
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+# ── Seagull ───────────────────────────────────────────────────────────────────
+
+func _setup_seagull() -> void:
+	_seagull_label = Label.new()
+	_seagull_label.name = "Seagull"
+	_seagull_label.text = "🦅"
+	_seagull_label.add_theme_font_size_override("font_size", 18)
+	_seagull_label.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 1.0))
+	_seagull_label.modulate.a = 0.0
+	add_child(_seagull_label)
+	# Mark as inactive (null means "no active flight"; we'll toggle via modulate)
+	_seagull_label = null
+
+func _schedule_next_seagull() -> void:
+	_seagull_timer = randf_range(SEAGULL_INTERVAL_MIN, SEAGULL_INTERVAL_MAX)
+
+func _fly_seagull() -> void:
+	# Build the label on first flight or reuse by finding it
+	var gull: Label = get_node_or_null("Seagull") as Label
+	if gull == null:
+		gull = Label.new()
+		gull.name = "Seagull"
+		gull.text = "🦅"
+		gull.add_theme_font_size_override("font_size", 18)
+		gull.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 1.0))
+		gull.modulate.a = 0.0
+		add_child(gull)
+
+	_seagull_label = gull
+
+	var map_h: float = size.y * 0.8
+	var start_y: float = randf_range(size.y * 0.1, map_h)
+	var fly_dur: float = randf_range(SEAGULL_FLY_MIN, SEAGULL_FLY_MAX)
+
+	gull.position = Vector2(-32.0, start_y)
+	gull.modulate.a = 0.0
+
+	var tween := create_tween()
+	tween.set_parallel(true)
+	# Fade in quickly
+	tween.tween_property(gull, "modulate:a", 1.0, 0.8).set_ease(Tween.EASE_OUT)
+	# Drift across
+	tween.tween_property(gull, "position:x", size.x + 32.0, fly_dur).set_ease(Tween.EASE_IN_OUT)
+	# Fade out in the last 0.8 s
+	tween.chain()
+	tween.tween_property(gull, "modulate:a", 0.0, 0.8).set_ease(Tween.EASE_IN)
+	tween.tween_callback(_on_seagull_done)
+
+func _on_seagull_done() -> void:
+	_seagull_label = null
+	_schedule_next_seagull()
 
 # ── Venue helpers ─────────────────────────────────────────────────────────────
 
