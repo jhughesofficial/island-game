@@ -374,6 +374,8 @@ func _run_save_load() -> void:
 	GameState.secrets_found       = 7
 	GameState.time_played         = 600.0
 	GameState.endings_reached     = ["arrested"]
+	GameState.act3_revealed       = true
+	GameState.act4_revealed       = true
 
 	GameState.save_game()
 
@@ -387,6 +389,8 @@ func _run_save_load() -> void:
 	GameState.secrets_found       = 0
 	GameState.time_played         = 0.0
 	GameState.endings_reached     = []
+	GameState.act3_revealed       = false
+	GameState.act4_revealed       = false
 
 	# Reload
 	GameState.load_game()
@@ -401,6 +405,8 @@ func _run_save_load() -> void:
 	_ok("save/load: secrets_found",            GameState.secrets_found  == 7)
 	_approx("save/load: time_played",          GameState.time_played,         600.0,    0.001)
 	_ok("save/load: endings_reached",          "arrested" in GameState.endings_reached)
+	_ok("save/load: act3_revealed",            GameState.act3_revealed == true)
+	_ok("save/load: act4_revealed",            GameState.act4_revealed == true)
 
 
 func _run_identity_system() -> void:

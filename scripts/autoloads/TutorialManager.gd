@@ -14,7 +14,7 @@ signal show_hint(hint_id: String, text: String, target_position: Vector2)
 const HINTS: Dictionary = {
 	"click":   {text = "→ Click to earn money", position = Vector2(200, 500)},
 	"venue":   {text = "→ Buy venues for passive income", position = Vector2(600, 120)},
-	"heat":    {text = "→ Watch your Heat ★ meter", position = Vector2(400, 30)},
+	"heat":    {text = "→ Heat ★ rising — high heat cuts your income", position = Vector2(400, 30)},
 	"upgrade": {text = "→ Upgrades multiply your earnings", position = Vector2(600, 120)},
 	"vip":     {text = "→ VIPs boost everything. Recruit them.", position = Vector2(600, 120)},
 }
