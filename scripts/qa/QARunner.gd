@@ -31,6 +31,7 @@ func _ready() -> void:
 	_run_click_value()
 	_run_narrative_events()
 	_run_save_load()
+	_run_identity_system()
 	_restore_save()
 	_print_summary()
 	get_tree().quit()
@@ -113,7 +114,7 @@ func _run_data_integrity() -> void:
 		_ok("upgrade id '%s' unique" % u.id, u.id not in upg_ids)
 		upg_ids.append(u.id)
 		_ok("upgrade '%s' unlock_at <= cost" % u.id, u.unlock_at <= u.cost)
-	_ok("upgrade count == 16", _upgrade_data.UPGRADES.size() == 16)
+	_ok("upgrade count == 22", _upgrade_data.UPGRADES.size() == 22)
 
 	# VIP IDs unique, appears_at > 0
 	var vip_ids: Array = []
@@ -325,6 +326,55 @@ func _run_save_load() -> void:
 	_approx("save/load: time_played",          GameState.time_played,         600.0,    0.001)
 	_ok("save/load: endings_reached",          "arrested" in GameState.endings_reached)
 
+
+func _run_identity_system() -> void:
+	_log("[QA] ── identity system ──────────────────────────────")
+
+	var identity_data = load("res://scripts/data/IdentityData.gd").new()
+	_ok("identity count == 4", identity_data.IDENTITIES.size() == 4)
+
+	var ids: Array = []
+	for identity in identity_data.IDENTITIES:
+		_ok("identity id '%s' unique" % identity.id, identity.id not in ids)
+		ids.append(identity.id)
+		_ok("identity '%s' has name" % identity.id, identity.name.length() > 0)
+		_ok("identity '%s' has bonus_type" % identity.id, identity.bonus_type.length() > 0)
+
+	# Philanthropist: +15 PI
+	_fresh()
+	var pi_before: int = GameState.political_influence
+	GameState.set_player_identity("philanthropist")
+	_ok("philanthropist grants +15 PI", GameState.political_influence == pi_before + 15)
+	_ok("philanthropist identity stored", GameState.player_identity == "philanthropist")
+
+	# Financier: +$500
+	_fresh()
+	var money_before: float = GameState.money
+	GameState.set_player_identity("financier")
+	_approx("financier grants +$500", GameState.money, money_before + 500.0, 0.01)
+
+	# Tech Mogul: click ×2
+	_fresh()
+	GameState.set_player_identity("tech_mogul")
+	GameState._rebuild_rates()
+	var base_click: float = maxf(1.0, GameState.get_income_per_second() * 0.1)
+	_approx("tech_mogul click_mult == 2.0", GameState.get_click_value(), base_click * 2.0, 0.001)
+
+	# Diplomat: VIP costs 25% cheaper
+	_fresh()
+	GameState.set_player_identity("diplomat")
+	var vip_data_node = load("res://scripts/data/VIPData.gd").new()
+	var first_vip: Dictionary = vip_data_node.VIPS[0]
+	var discounted: float = GameState.vip_cost(first_vip.id)
+	_approx("diplomat vip_cost = 75%% of base", discounted, first_vip.cost * 0.75, 0.01)
+
+	# Reset clears identity
+	GameState.reset_game()
+	_ok("reset_game clears player_identity", GameState.player_identity == "")
+	_approx("reset_game clears identity click mult", GameState.get_click_value(), 1.0, 0.001)
+
+	identity_data.free()
+	vip_data_node.free()
 
 # ── Summary ───────────────────────────────────────────────────────
 func _print_summary() -> void:
