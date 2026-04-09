@@ -392,6 +392,12 @@ func venue_cost(venue_id: String) -> float:
 	var count: int = venue_counts.get(venue_id, 0)
 	return _venue_data.get_cost(venue, count)
 
+func vip_cost(vip_id: String) -> float:
+	var vip = _get_vip(vip_id)
+	if vip == null:
+		return 0.0
+	return vip.cost * _identity_vip_discount
+
 func vip_is_available(vip_id: String) -> bool:
 	var vip = _get_vip(vip_id)
 	if vip == null:

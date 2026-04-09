@@ -90,11 +90,14 @@ func _make_row(vip: Dictionary) -> HBoxContainer:
 	info.add_child(sub_lbl)
 	row.add_child(info)
 
+	var actual_cost: float = GameState.vip_cost(vip.id)
 	var btn := Button.new()
 	btn.name = "BuyBtn"
-	btn.text = NumberFormatter.format(vip.cost)
+	btn.text = NumberFormatter.format(actual_cost)
+	if actual_cost < vip.cost:
+		btn.add_theme_color_override("font_color", Color(0.4, 0.9, 0.4, 1))
 	btn.custom_minimum_size = Vector2(110, 0)
-	btn.disabled = GameState.money < vip.cost
+	btn.disabled = GameState.money < actual_cost
 	btn.pressed.connect(_on_recruit.bind(vip.id))
 	row.add_child(btn)
 	return row
@@ -170,4 +173,4 @@ func _on_money_changed(money: float) -> void:
 		var row = list.get_node_or_null("vip_" + vip.id)
 		if row == null:
 			continue
-		row.get_node("BuyBtn").disabled = money < vip.cost
+		row.get_node("BuyBtn").disabled = money < GameState.vip_cost(vip.id)
