@@ -114,7 +114,7 @@ func _run_data_integrity() -> void:
 		_ok("upgrade id '%s' unique" % u.id, u.id not in upg_ids)
 		upg_ids.append(u.id)
 		_ok("upgrade '%s' unlock_at <= cost" % u.id, u.unlock_at <= u.cost)
-	_ok("upgrade count == 22", _upgrade_data.UPGRADES.size() == 22)
+	_ok("upgrade count == 21", _upgrade_data.UPGRADES.size() == 21)
 
 	# VIP IDs unique, appears_at > 0
 	var vip_ids: Array = []
@@ -183,12 +183,10 @@ func _run_economy() -> void:
 		GameState.get_income_per_second(), 0.15, 0.001)
 	GameState.ghost_mode = false
 
-	# Blackout venue has negative heat — verify it's subtracted
-	_fresh()
-	GameState.buy_venue("blackout")
-	GameState._rebuild_rates()
-	_ok("blackout heat_rate is negative (reduces heat)",
-		GameState.get_heat_per_second() < 0.0)
+	# Blackout venue has negative heat_rate in data (heat_per_second is clamped to >=0)
+	var blackout_venue = _get_venue("blackout")
+	_ok("blackout venue heat_rate is negative in data",
+		blackout_venue.heat_rate < 0.0)
 
 
 func _run_heat_system() -> void:

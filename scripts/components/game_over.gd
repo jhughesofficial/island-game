@@ -103,7 +103,7 @@ func _build_stats() -> String:
 	var lines: Array = [
 		"• Total earned:    %s" % NumberFormatter.format(GameState.lifetime_money),
 		"• Venues built:    %d" % venues_total,
-		"• Upgrades:        %d / 22" % upgrades_total,
+		"• Upgrades:        %d / 21" % upgrades_total,
 		"• VIPs recruited:  %d / 8" % vips_total,
 		"• Secrets found:   %d" % GameState.secrets_found,
 		"• Time played:     %s%s" % [time_str, identity_line],
