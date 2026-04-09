@@ -17,6 +17,9 @@ const PANEL_SELECTED := Color(0.13, 0.11, 0.05, 1)
 func _ready() -> void:
 	begin_btn.pressed.connect(_on_begin)
 	begin_btn.disabled = true
+	begin_btn.text = "SELECT AN IDENTITY TO BEGIN"
+	await get_tree().process_frame
+	begin_btn.pivot_offset = begin_btn.size / 2
 	_build_cards()
 
 func _build_cards() -> void:
@@ -132,6 +135,13 @@ func _select_identity(id: String) -> void:
 
 	# Update paper doll
 	_update_doll()
+
+	# Enable begin button with animated pulse
+	begin_btn.disabled = false
+	begin_btn.text = "BEGIN  ▶"
+	var tween := create_tween()
+	tween.tween_property(begin_btn, "scale", Vector2(1.05, 1.05), 0.12).set_trans(Tween.TRANS_BACK)
+	tween.tween_property(begin_btn, "scale", Vector2(1.0, 1.0), 0.1)
 
 	# Update identity label
 	for identity in _identity_data.IDENTITIES:

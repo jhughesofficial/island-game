@@ -122,7 +122,7 @@ func _play_entrance() -> void:
 
 func _on_restart() -> void:
 	GameState.reset_game()
-	get_tree().change_scene_to_file("res://scenes/CharacterCreation.tscn")
+	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
 
 func _on_main_menu() -> void:
 	GameState.reset_game()

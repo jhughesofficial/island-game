@@ -51,6 +51,13 @@ text = "How to Play"
 custom_minimum_size = Vector2(220, 52)
 alignment = 1
 
+[node name="CustomRunBtn" type="Button" parent="CenterContainer/VBoxContainer"]
+visible = false
+text = "Custom Run  👻"
+custom_minimum_size = Vector2(220, 52)
+alignment = 1
+theme_override_colors/font_color = Color(0.75, 0.88, 0.95, 1)
+
 [node name="QuitBtn" type="Button" parent="CenterContainer/VBoxContainer"]
 text = "Quit"
 custom_minimum_size = Vector2(220, 52)
