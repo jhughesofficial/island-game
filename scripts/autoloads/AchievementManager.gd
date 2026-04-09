@@ -117,6 +117,18 @@ func _is_condition_met(id: String) -> bool:
 			return GameState.retired_identities.size() >= 4
 		"deep_state_upgrade":
 			return GameState.upgrades_purchased.get("deep_state", false)
+		"arrested_ending":
+			return "arrested" in GameState.endings_reached
+		"suicide_ending":
+			return "suicide" in GameState.endings_reached
+		"all_upgrades":
+			var upgrade_data = load("res://scripts/data/UpgradeData.gd").new()
+			for upg in upgrade_data.UPGRADES:
+				if not GameState.upgrades_purchased.get(upg.id, false):
+					return false
+			return true
+		"twenty_five_secrets":
+			return GameState.secrets_found >= 25
 	return false
 
 func _save_achievements() -> void:

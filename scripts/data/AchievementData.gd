@@ -127,4 +127,28 @@ const ACHIEVEMENTS: Array = [
 		"description": "Purchase 'Deep State'. Some structures are self-maintaining.",
 		"secret": true
 	},
+	{
+		"id": "arrested_ending",
+		"name": "They Got You",
+		"description": "Get arrested. The paper trail led back to you — it always does.",
+		"secret": true
+	},
+	{
+		"id": "suicide_ending",
+		"name": "Officially Dead",
+		"description": "Watch your own obituary from a terrace on a different island.",
+		"secret": true
+	},
+	{
+		"id": "all_upgrades",
+		"name": "The Untouchable",
+		"description": "Purchase every upgrade. The operation is complete.",
+		"secret": false
+	},
+	{
+		"id": "twenty_five_secrets",
+		"name": "Nothing Is Hidden",
+		"description": "Find 25 secrets on the island.",
+		"secret": false
+	},
 ]
