@@ -45,7 +45,16 @@ func _on_money_changed(amount: float) -> void:
 	rate_label.text = NumberFormatter.format_rate(GameState.get_income_per_second())
 
 func _on_pi_changed(pi: int) -> void:
-	pi_label.text = "🏛 %s" % NumberFormatter.format_pi(pi)
+	if pi >= RETIRE_PI_THRESHOLD:
+		pi_label.text = "🏛 %s PI" % NumberFormatter.format_pi(pi)
+		pi_label.add_theme_color_override("font_color", Color(0.788, 0.659, 0.298, 1.0))
+	elif pi >= 50:
+		# Tease the retire threshold so the player knows to keep building PI
+		pi_label.text = "🏛 %d / 100 PI" % pi
+		pi_label.add_theme_color_override("font_color", Color(0.9, 0.85, 0.6, 1.0))
+	else:
+		pi_label.text = "🏛 %s" % NumberFormatter.format_pi(pi)
+		pi_label.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 1.0))
 	retire_btn.visible = pi >= RETIRE_PI_THRESHOLD
 
 func _on_heat_changed(heat: float) -> void:

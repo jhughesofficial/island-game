@@ -2,11 +2,13 @@ extends ScrollContainer
 
 @onready var list: VBoxContainer = $MarginContainer/VBoxContainer
 var _data_node: Node
+var _upgrade_data_node: Node
 # -1 = max, otherwise 1/10/100
 var _mult: int = 1
 
 func _ready() -> void:
 	_data_node = load("res://scripts/data/VenueData.gd").new()
+	_upgrade_data_node = load("res://scripts/data/UpgradeData.gd").new()
 	_add_mult_row()
 	_build_list()
 	GameState.money_changed.connect(_on_money_changed)
@@ -74,6 +76,16 @@ func _build_list() -> void:
 			shown_mystery = true
 			break
 
+func _effective_income(venue: Dictionary, count: int) -> float:
+	if count <= 0:
+		return 0.0
+	var qty_mult: float = _data_node.get_quantity_multiplier(count)
+	var upg_mult: float = 1.0
+	for upg in _upgrade_data_node.UPGRADES:
+		if upg.type == venue.id and GameState.upgrades_purchased.get(upg.id, false):
+			upg_mult *= upg.multiplier
+	return venue.base_income * count * qty_mult * upg_mult
+
 func _get_effective_n(venue_id: String) -> int:
 	if _mult == -1:
 		return maxi(1, GameState.venue_max_affordable(venue_id))
@@ -98,7 +110,7 @@ func _make_row(venue: Dictionary) -> HBoxContainer:
 	sub_lbl.name = "SubLabel"
 	var count: int = GameState.venue_counts.get(venue.id, 0)
 	if count > 0:
-		sub_lbl.text = "%s  |  %s" % [venue.flavor, NumberFormatter.format_rate(venue.base_income * count)]
+		sub_lbl.text = "%s  |  %s" % [venue.flavor, NumberFormatter.format_rate(_effective_income(venue, count))]
 	else:
 		sub_lbl.text = venue.flavor
 	sub_lbl.add_theme_font_size_override("font_size", 11)
@@ -199,5 +211,5 @@ func _on_money_changed(money: float) -> void:
 		btn.disabled = money < cost or n == 0
 		var count: int = GameState.venue_counts.get(venue.id, 0)
 		if count > 0:
-			row.get_node("Info/SubLabel").text = "%s  |  %s" % [venue.flavor, NumberFormatter.format_rate(venue.base_income * count)]
+			row.get_node("Info/SubLabel").text = "%s  |  %s" % [venue.flavor, NumberFormatter.format_rate(_effective_income(venue, count))]
 		row.get_node("CountLabel").text = str(count)

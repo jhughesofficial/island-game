@@ -91,12 +91,12 @@ func _build_stats() -> String:
 		time_str = "%dm" % mins
 
 	var lines: Array = [
-		"Total earned   %s" % NumberFormatter.format(GameState.lifetime_money),
-		"Venues built   %d" % venues_total,
-		"Upgrades       %d / %d" % [upgrades_total, 16],
-		"VIPs recruited %d / 8" % vips_total,
-		"Secrets found  %d" % GameState.secrets_found,
-		"Time played    %s" % time_str,
+		"• Total earned:    %s" % NumberFormatter.format(GameState.lifetime_money),
+		"• Venues built:    %d" % venues_total,
+		"• Upgrades:        %d / 16" % upgrades_total,
+		"• VIPs recruited:  %d / 8" % vips_total,
+		"• Secrets found:   %d" % GameState.secrets_found,
+		"• Time played:     %s" % time_str,
 	]
 	return "\n".join(lines)
 
