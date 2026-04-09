@@ -76,8 +76,19 @@ func _effect_label(upg: Dictionary) -> String:
 			return "×%.0f click" % upg.multiplier
 		"heat_suppress":
 			return "▼ heat"
+		"political":
+			return "×%.0f Political Connections" % upg.multiplier
+		"blackout":
+			return "×%.0f Media Blackout" % upg.multiplier
+		"shell":
+			return "×%.0f Shell Corporation" % upg.multiplier
 		_:
-			return "×%.0f %s" % [upg.multiplier, upg.type]
+			# Generic: look up venue name if type matches a venue id
+			var vd = load("res://scripts/data/VenueData.gd").new()
+			for venue in vd.VENUES:
+				if venue.id == upg.type:
+					return "×%.0f %s" % [upg.multiplier, venue.name]
+			return "×%.0f income" % upg.multiplier
 
 func _make_mystery_row(prereq_name: String) -> HBoxContainer:
 	var row := HBoxContainer.new()
