@@ -17,6 +17,8 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1")
 
 [node name="Background" type="ColorRect" parent="." unique_id=2067849042]
@@ -30,6 +32,7 @@ layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 64.0
+grow_horizontal = 2
 
 [node name="HSplitContainer" type="HSplitContainer" parent="." unique_id=276330912]
 layout_mode = 1
@@ -38,6 +41,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = 64.0
 offset_bottom = -28.0
+grow_horizontal = 2
+grow_vertical = 2
 split_offsets = PackedInt32Array(600)
 split_offset = 600
 
@@ -55,6 +60,8 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -28.0
+grow_horizontal = 2
+grow_vertical = 0
 
 [node name="Toast" parent="." unique_id=777475118 instance=ExtResource("9")]
 layout_mode = 1
@@ -67,10 +74,14 @@ offset_left = -200.0
 offset_top = -80.0
 offset_right = 200.0
 offset_bottom = -32.0
+grow_horizontal = 2
+grow_vertical = 0
 
 [node name="GameOverOverlay" parent="." unique_id=323573081 instance=ExtResource("5")]
 layout_mode = 1
 anchors_preset = 15
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="SettingsPanel" parent="." unique_id=200355580 instance=ExtResource("6")]
 layout_mode = 1
@@ -83,18 +94,18 @@ offset_left = -200.0
 offset_top = -150.0
 offset_right = 200.0
 offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="BreakingNewsModal" parent="." unique_id=481920001 instance=ExtResource("10")]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="NarrativeEventModal" parent="." unique_id=512734021 instance=ExtResource("11")]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="SaveTimer" type="Timer" parent="." unique_id=390431680]
 
@@ -104,3 +115,4 @@ anchors_preset = 9
 anchor_bottom = 1.0
 offset_top = 64.0
 offset_right = 120.0
+grow_vertical = 2
