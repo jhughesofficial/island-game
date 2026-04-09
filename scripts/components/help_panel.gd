@@ -45,7 +45,12 @@ THE HEAT METER
 
 Five stars. Every venue generates attention. If heat reaches maximum and stays there for 60 seconds, the authorities close in and your story ends badly.
 
-Some upgrades and VIPs reduce heat. Don't ignore it.
+Heat doesn't just threaten — it costs you:
+
+  ★★★☆☆  Passive income -10%
+  ★★★★☆  Passive income -25%, VIP recruitment costs ×3
+
+Some upgrades and VIPs reduce heat. High heat is expensive. Don't ignore it.
 
 ─────────────────────────
 
@@ -63,7 +68,7 @@ There are three ways your story ends. How it concludes depends entirely on how y
 
 SECRETS
 
-Keep an eye on the island. Sometimes things appear that weren't there before. Click them quickly — they don't stay long.
+Keep an eye on the island. Sometimes things appear that weren't there before. Click them quickly — they don't stay long. Secrets reward money, Political Influence, or heat reduction. Some are more valuable than others.
 
 ─────────────────────────
 
@@ -71,7 +76,8 @@ TIPS
 
   • Build passive income before spending on upgrades
   • Recruit VIPs early — their multipliers compound
-  • Don't let heat sit at maximum
+  • Keep heat below 3 stars — the income penalties add up fast
+  • Click secrets immediately — the window is only 15 seconds
   • The news ticker tells you more than you think
   • PI is your safety net. Build it.
 """

@@ -28,10 +28,12 @@ func _ready() -> void:
 	_run_data_integrity()
 	_run_economy()
 	_run_heat_system()
+	_run_heat_economy()
 	_run_click_value()
 	_run_narrative_events()
 	_run_save_load()
 	_run_identity_system()
+	_run_secrets()
 	_restore_save()
 	_print_summary()
 	get_tree().quit()
@@ -230,6 +232,78 @@ func _run_heat_system() -> void:
 	GameState._rebuild_rates()
 	_ok("heat_per_second >= 0 with all suppressors and no venues",
 		GameState.get_heat_per_second() >= 0.0)
+
+
+func _run_heat_economy() -> void:
+	_log("[QA] ── heat economy ─────────────────────────────────")
+
+	# No heat: income mult = 1.0
+	_fresh()
+	GameState.buy_venue("bonfire")
+	GameState._rebuild_rates()
+	var base_ips: float = GameState.get_income_per_second()
+	GameState.heat = 0.0
+	_approx("heat 0: income mult = 1.0",
+		GameState.get_income_per_second(), base_ips * 1.0, 0.001)
+
+	# Heat 3: income -10%
+	GameState.heat = 3.0
+	_approx("heat 3.0: income mult = 0.90",
+		GameState.get_income_per_second(), base_ips * 0.9, 0.001)
+
+	# Heat 4: income -25%
+	GameState.heat = 4.0
+	_approx("heat 4.0: income mult = 0.75",
+		GameState.get_income_per_second(), base_ips * 0.75, 0.001)
+
+	# Heat 5: income still -25% (not worse)
+	GameState.heat = 5.0
+	_approx("heat 5.0: income mult = 0.75 (same as 4)",
+		GameState.get_income_per_second(), base_ips * 0.75, 0.001)
+
+	# VIP cost heat multiplier
+	var vip_data_node = load("res://scripts/data/VIPData.gd").new()
+	var fixer: Dictionary = vip_data_node.VIPS[0]
+	_fresh()
+	GameState.heat = 0.0
+	var base_vip_cost: float = GameState.vip_cost(fixer.id)
+	_approx("heat 0: vip_cost == base", base_vip_cost, fixer.cost, 0.01)
+
+	GameState.heat = 4.0
+	var heat4_vip_cost: float = GameState.vip_cost(fixer.id)
+	_approx("heat 4: vip_cost == base * 3",
+		heat4_vip_cost, fixer.cost * 3.0, 0.01)
+
+	GameState.heat = 2.9
+	var heat_below_threshold: float = GameState.vip_cost(fixer.id)
+	_approx("heat 2.9: vip_cost == base (no penalty)",
+		heat_below_threshold, fixer.cost * 1.0, 0.01)
+
+	vip_data_node.free()
+
+
+func _run_secrets() -> void:
+	_log("[QA] ── secrets ──────────────────────────────────────")
+
+	var secret_data = load("res://scripts/data/SecretData.gd").new()
+	_ok("secret count == 15", secret_data.SECRETS.size() == 15)
+
+	var secret_ids: Array = []
+	var valid_reward_types: Array = ["money", "pi", "heat_reduce"]
+	for s in secret_data.SECRETS:
+		_ok("secret id '%s' unique" % s.id, s.id not in secret_ids)
+		secret_ids.append(s.id)
+		_ok("secret '%s' has label_text" % s.id, s.label_text.length() > 0)
+		_ok("secret '%s' reward_type valid" % s.id, s.reward_type in valid_reward_types)
+		_ok("secret '%s' reward_value > 0" % s.id, s.reward_value > 0.0)
+		_ok("secret '%s' weight > 0" % s.id, s.weight > 0)
+
+	# Weighted pick always returns a valid secret
+	for _i in range(20):
+		var picked: Dictionary = secret_data.pick_weighted()
+		_ok("pick_weighted returns valid secret (run %d)" % _i, picked.id in secret_ids)
+
+	secret_data.free()
 
 
 func _run_click_value() -> void:

@@ -79,6 +79,41 @@ const SECRETS: Array = [
 		"reward_value": 1.0,
 		"weight": 4
 	},
+	{
+		"id": "black_ledger",
+		"label_text": "📓 The Black Ledger",
+		"reward_type": "pi",
+		"reward_value": 35,
+		"weight": 3
+	},
+	{
+		"id": "deposition_tape",
+		"label_text": "🎞️ Missing Deposition Tape",
+		"reward_type": "heat_reduce",
+		"reward_value": 1.5,
+		"weight": 3
+	},
+	{
+		"id": "shell_routing",
+		"label_text": "🏗️ Shell Company Routing",
+		"reward_type": "money",
+		"reward_value": 0.10,
+		"weight": 5
+	},
+	{
+		"id": "witness_list",
+		"label_text": "👁️ Witness Contact List",
+		"reward_type": "pi",
+		"reward_value": 30,
+		"weight": 4
+	},
+	{
+		"id": "sat_phone",
+		"label_text": "📡 Encrypted Satellite Phone",
+		"reward_type": "money",
+		"reward_value": 0.06,
+		"weight": 6
+	},
 ]
 
 func pick_weighted() -> Dictionary:

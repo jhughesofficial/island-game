@@ -1,6 +1,7 @@
 extends Control
 
 @onready var close_btn: Button = $Panel/VBoxContainer/HeaderRow/CloseBtn
+@onready var stats_grid: VBoxContainer = $Panel/VBoxContainer/ScrollContainer/StatsGrid
 @onready var total_earned_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/TotalEarnedVal
 @onready var current_balance_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/CurrentBalanceVal
 @onready var passive_income_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/PassiveIncomeVal
@@ -16,9 +17,12 @@ extends Control
 @onready var peak_income_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/PeakIncomeVal
 
 var _peak_income_per_second: float = 0.0
+var _identity_row: HBoxContainer = null
+var _identity_val: Label = null
 
 func _ready() -> void:
 	close_btn.pressed.connect(func(): hide())
+	_build_identity_row()
 
 func _process(_delta: float) -> void:
 	if not visible:
@@ -36,7 +40,34 @@ func show_panel() -> void:
 	var tween := create_tween()
 	tween.tween_property($Panel, "scale", Vector2(1.0, 1.0), 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
+func _build_identity_row() -> void:
+	_identity_row = HBoxContainer.new()
+	var lbl := Label.new()
+	lbl.text = "Operator Identity"
+	lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	lbl.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6, 1))
+	_identity_row.add_child(lbl)
+	_identity_val = Label.new()
+	_identity_val.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_identity_row.add_child(_identity_val)
+	stats_grid.add_child(_identity_row)
+	# Move to top of grid
+	stats_grid.move_child(_identity_row, 0)
+	_identity_row.visible = false
+
 func _refresh() -> void:
+	# Identity row — visible only in Custom Run
+	if not GameState.player_identity.is_empty():
+		var id_data = load("res://scripts/data/IdentityData.gd").new()
+		for identity in id_data.IDENTITIES:
+			if identity.id == GameState.player_identity:
+				_identity_val.text = identity.cover
+				_identity_val.add_theme_color_override("font_color", identity.accent_color)
+				break
+		_identity_row.visible = true
+	else:
+		_identity_row.visible = false
+
 	total_earned_val.text = NumberFormatter.format(GameState.lifetime_money)
 	current_balance_val.text = NumberFormatter.format(GameState.money)
 	passive_income_val.text = NumberFormatter.format_rate(GameState.get_income_per_second())
