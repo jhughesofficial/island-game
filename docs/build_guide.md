@@ -30,6 +30,7 @@ Templates are installed once per Godot version and shared across all projects.
 |--------|--------|
 | Windows Desktop | `builds/windows/TheIsland.exe` |
 | macOS | `builds/mac/TheIsland.dmg` |
+| Linux/Steam Deck | `builds/linux/TheIsland.x86_64` |
 | Web | `builds/web/index.html` |
 
 ---
@@ -49,6 +50,12 @@ Replace `<godot>` with the path to your Godot 4.6 executable.
 
 ```bash
 <godot> --headless --export-release "macOS" builds/mac/TheIsland.dmg
+```
+
+### Linux / Steam Deck
+
+```bash
+<godot> --headless --export-release "Linux/Steam Deck" builds/linux/TheIsland.x86_64
 ```
 
 ### Web
