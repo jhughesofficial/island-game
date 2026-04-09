@@ -95,7 +95,10 @@ func _make_row(vip: Dictionary) -> HBoxContainer:
 	var btn := Button.new()
 	btn.name = "BuyBtn"
 	btn.text = NumberFormatter.format(actual_cost)
-	if actual_cost < vip.cost:
+	if GameState.heat >= 4.0:
+		btn.text = NumberFormatter.format(actual_cost) + " ⚠"
+		btn.add_theme_color_override("font_color", Color(1.0, 0.5, 0.2, 1))
+	elif actual_cost < vip.cost:
 		btn.add_theme_color_override("font_color", Color(0.4, 0.9, 0.4, 1))
 	btn.custom_minimum_size = Vector2(110, 0)
 	btn.disabled = GameState.money < actual_cost
