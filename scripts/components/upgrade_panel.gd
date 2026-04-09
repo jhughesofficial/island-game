@@ -55,7 +55,7 @@ func _make_row(upg: Dictionary) -> HBoxContainer:
 	name_lbl.add_theme_font_size_override("font_size", 15)
 	info.add_child(name_lbl)
 	var sub_lbl := Label.new()
-	sub_lbl.text = upg.flavor
+	sub_lbl.text = "%s  |  %s" % [upg.flavor, _effect_label(upg)]
 	sub_lbl.add_theme_font_size_override("font_size", 11)
 	sub_lbl.modulate = Color(0.7, 0.7, 0.7)
 	info.add_child(sub_lbl)
@@ -69,6 +69,15 @@ func _make_row(upg: Dictionary) -> HBoxContainer:
 	btn.pressed.connect(_on_buy.bind(upg.id))
 	row.add_child(btn)
 	return row
+
+func _effect_label(upg: Dictionary) -> String:
+	match upg.type:
+		"click":
+			return "×%.0f click" % upg.multiplier
+		"heat_suppress":
+			return "▼ heat"
+		_:
+			return "×%.0f %s" % [upg.multiplier, upg.type]
 
 func _make_mystery_row(prereq_name: String) -> HBoxContainer:
 	var row := HBoxContainer.new()

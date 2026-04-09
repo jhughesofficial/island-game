@@ -80,7 +80,7 @@ const UPGRADES: Array = [
 		"name": "Legal Retainer",
 		"cost": 50000.0,
 		"type": "heat_suppress",
-		"multiplier": 1.0,
+		"multiplier": 0.015,  # reduces heat/s passively — stored here for _rebuild_rates
 		"unlock_at": 25000.0,
 		"flavor": "He's very good at making things go away."
 	},
@@ -89,7 +89,7 @@ const UPGRADES: Array = [
 		"name": "Hush Money",
 		"cost": 500000.0,
 		"type": "heat_suppress",
-		"multiplier": 1.0,
+		"multiplier": 0.030,  # reduces heat/s passively — stacks with legal_retainer
 		"unlock_at": 250000.0,
 		"flavor": "A generous gift. No receipt."
 	},

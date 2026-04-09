@@ -305,8 +305,17 @@ func _rebuild_rates() -> void:
 	_income_per_second *= _vip_multiplier
 	if ghost_mode:
 		_income_per_second *= ghost_multiplier
+
+	# Passive heat reduction from upgrades (heat_suppress type)
+	var heat_suppress_total: float = 0.0
+	for upg in _upgrade_data.UPGRADES:
+		if upg.type == "heat_suppress" and upgrades_purchased.get(upg.id, false):
+			# Legal Retainer: -0.015/s, Hush Money: -0.03/s (stored in multiplier field for suppression)
+			heat_suppress_total += upg.multiplier
+	# Passive heat reduction from VIPs
 	if vips_recruited.get("president", false):
-		_heat_per_second = maxf(0.0, _heat_per_second - 0.02)
+		heat_suppress_total += 0.02
+	_heat_per_second = maxf(0.0, _heat_per_second - heat_suppress_total)
 
 	# Click value: 10% of passive income (min $1), boosted by click upgrades + VIPs
 	var click_base: float = maxf(1.0, _income_per_second * 0.1)
