@@ -11,6 +11,7 @@ extends Control
 @onready var narrative_modal: Control = $NarrativeEventModal
 
 const ACT3_THRESHOLD: float = 50_000_000.0
+const ACT4_THRESHOLD: float = 200_000_000.0
 
 var _narrative_data = load("res://scripts/data/NarrativeEventData.gd").new()
 
@@ -40,7 +41,16 @@ func _on_save_timer() -> void:
 	GameState.save_game()
 
 func _on_lifetime_money_changed(amount: float) -> void:
-	if amount >= ACT3_THRESHOLD and not GameState.act3_revealed:
+	if amount >= ACT4_THRESHOLD and not GameState.act4_revealed:
+		GameState.act4_revealed = true
+		GameState.save_game()
+		breaking_news_modal.show_modal(
+			"⚡ CASE DISMISSED ⚡",
+			"CHARGES DROPPED — INVESTIGATION CLOSED",
+			"In a stunning reversal, federal prosecutors announced today that all charges related to the island operation have been dropped. Key witnesses declined to testify. Flight logs were ruled inadmissible. The presiding judge has ordered all case documents sealed for a period of not less than fifty years.\n\n[i]No further questions will be entertained at this time.[/i]",
+			"breaking_news"
+		)
+	elif amount >= ACT3_THRESHOLD and not GameState.act3_revealed:
 		GameState.act3_revealed = true
 		GameState.save_game()
 		breaking_news_modal.show_modal()

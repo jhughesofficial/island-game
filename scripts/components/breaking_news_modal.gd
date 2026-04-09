@@ -5,12 +5,22 @@ const ACT3_THRESHOLD: float = 50_000_000.0
 @onready var overlay: ColorRect = $Overlay
 @onready var panel: PanelContainer = $Overlay/CenterContainer/Panel
 @onready var continue_button: Button = $Overlay/CenterContainer/Panel/VBox/ContinueButton
+@onready var red_banner: Label = $Overlay/CenterContainer/Panel/VBox/RedBanner
+@onready var headline_label: Label = $Overlay/CenterContainer/Panel/VBox/HeadlineLabel
+@onready var body_label: RichTextLabel = $Overlay/CenterContainer/Panel/VBox/BodyLabel
 
 func _ready() -> void:
 	hide()
 
-func show_modal() -> void:
-	AudioManager.play_sfx("breaking_news")
+## Show with optional content override. Pass empty strings to use the scene defaults.
+func show_modal(banner: String = "", headline: String = "", body: String = "", sfx: String = "breaking_news") -> void:
+	if banner.length() > 0:
+		red_banner.text = banner
+	if headline.length() > 0:
+		headline_label.text = headline
+	if body.length() > 0:
+		body_label.text = body
+	AudioManager.play_sfx(sfx)
 	show()
 	overlay.modulate.a = 0.0
 	panel.scale = Vector2(0.8, 0.8)

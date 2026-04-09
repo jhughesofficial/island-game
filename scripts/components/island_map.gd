@@ -611,15 +611,21 @@ func _on_secret_clicked(secret_dict: Dictionary) -> void:
 	GameState.secret_found.emit(secret_dict.id)
 
 	# Floating reward label at the button's position
-	_spawn_secret_label(dying.position, reward_label)
+	var reward_color: Color
+	match secret_dict.reward_type:
+		"money":       reward_color = Color(0.788, 0.659, 0.298, 1)  # gold
+		"pi":          reward_color = Color(0.4, 0.7, 1.0, 1)         # blue
+		"heat_reduce": reward_color = Color(0.3, 0.9, 0.4, 1)         # green
+		_:             reward_color = Color(1, 1, 1, 1)
+	_spawn_secret_label(dying.position, reward_label, reward_color)
 
 	_schedule_next_secret()
 
-func _spawn_secret_label(pos: Vector2, text: String) -> void:
+func _spawn_secret_label(pos: Vector2, text: String, color: Color = Color(0.788, 0.659, 0.298, 1)) -> void:
 	var lbl := Label.new()
 	lbl.text = text
 	lbl.add_theme_font_size_override("font_size", 16)
-	lbl.add_theme_color_override("font_color", Color(0.788, 0.659, 0.298, 1))
+	lbl.add_theme_color_override("font_color", color)
 	lbl.position = pos
 	add_child(lbl)
 	var tween := create_tween()

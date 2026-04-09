@@ -21,6 +21,8 @@ func _ready() -> void:
 	$VBoxContainer/TriggerNarrative.pressed.connect(_on_trigger_narrative)
 	$VBoxContainer/UnlockAllVenues.pressed.connect(_on_unlock_all_venues)
 	$VBoxContainer/UnlockGhost.pressed.connect(_on_unlock_ghost)
+	$VBoxContainer/CycleIdentity.pressed.connect(_on_cycle_identity)
+	$VBoxContainer/ClearIdentity.pressed.connect(_on_clear_identity)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -82,3 +84,18 @@ func _on_unlock_all_venues() -> void:
 
 func _on_unlock_ghost() -> void:
 	GameState.unlock_ghost_mode()
+
+func _on_cycle_identity() -> void:
+	var id_data = load("res://scripts/data/IdentityData.gd").new()
+	var ids: Array = id_data.IDENTITIES.map(func(i): return i.id)
+	var current_idx: int = ids.find(GameState.player_identity)
+	var next_idx: int = (current_idx + 1) % ids.size()
+	GameState.set_player_identity(ids[next_idx])
+	$VBoxContainer/CycleIdentity.text = "Identity: %s →" % ids[next_idx]
+
+func _on_clear_identity() -> void:
+	GameState.player_identity       = ""
+	GameState._identity_click_mult  = 1.0
+	GameState._identity_vip_discount = 1.0
+	GameState._rebuild_rates()
+	$VBoxContainer/CycleIdentity.text = "Cycle Identity →"

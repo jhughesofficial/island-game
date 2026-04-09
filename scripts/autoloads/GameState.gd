@@ -9,6 +9,7 @@ var last_save_unix: int = 0    # Unix timestamp of last save
 var secrets_found: int = 0
 var time_played: float = 0.0   # Total seconds of active play
 var act3_revealed: bool = false
+var act4_revealed: bool = false
 var narrative_events_seen: Array = []
 var heat_scare_survived: bool = false
 var endings_reached: Array = []
@@ -440,6 +441,7 @@ func save_game() -> void:
 		"secrets_found": secrets_found,
 		"time_played": time_played,
 		"act3_revealed": act3_revealed,
+		"act4_revealed": act4_revealed,
 		"narrative_events_seen": narrative_events_seen,
 		"heat_scare_survived": heat_scare_survived,
 		"endings_reached": endings_reached,
@@ -476,6 +478,7 @@ func load_game() -> void:
 	secrets_found = int(parsed.get("secrets_found", 0))
 	time_played = float(parsed.get("time_played", 0.0))
 	act3_revealed = bool(parsed.get("act3_revealed", false))
+	act4_revealed = bool(parsed.get("act4_revealed", false))
 	narrative_events_seen = parsed.get("narrative_events_seen", [])
 	heat_scare_survived = bool(parsed.get("heat_scare_survived", false))
 	endings_reached = parsed.get("endings_reached", [])
@@ -571,6 +574,7 @@ func reset_game() -> void:
 	secrets_found = 0
 	time_played = 0.0
 	act3_revealed = false
+	act4_revealed = false
 	narrative_events_seen = []
 	heat_scare_survived = false
 	endings_reached = []

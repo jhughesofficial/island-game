@@ -59,3 +59,11 @@ text = "All Venues x10"
 
 [node name="UnlockGhost" type="Button" parent="VBoxContainer"]
 text = "Ghost Mode"
+
+[node name="Sep4" type="HSeparator" parent="VBoxContainer"]
+
+[node name="CycleIdentity" type="Button" parent="VBoxContainer"]
+text = "Cycle Identity →"
+
+[node name="ClearIdentity" type="Button" parent="VBoxContainer"]
+text = "Clear Identity"
