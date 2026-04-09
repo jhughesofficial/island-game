@@ -389,6 +389,7 @@ const OFFLINE_CAP_SECONDS: int = 28800  # 8 hours
 
 func save_game() -> void:
 	var data: Dictionary = {
+		"save_version": 2,
 		"money": money,
 		"lifetime_money": lifetime_money,
 		"political_influence": political_influence,
@@ -420,6 +421,9 @@ func load_game() -> void:
 	var parsed = JSON.parse_string(raw)
 	if parsed == null or not parsed is Dictionary:
 		return
+	var save_version: int = int(parsed.get("save_version", 1))
+	if save_version < 2:
+		print("[GameState] Migrating save v%d → v2: applying safe defaults for new fields." % save_version)
 	money = float(parsed.get("money", 0.0))
 	lifetime_money = float(parsed.get("lifetime_money", 0.0))
 	political_influence = int(parsed.get("political_influence", 0))

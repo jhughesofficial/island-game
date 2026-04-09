@@ -2,7 +2,10 @@
 .godot/
 *.translation
 *.uid
+*.import
 export_presets.cfg
+export/
+builds/
 
 # Mono/C#
 .mono/
@@ -13,3 +16,6 @@ mono_crash.*.json
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Claude local settings
+.claude/settings.local.json
