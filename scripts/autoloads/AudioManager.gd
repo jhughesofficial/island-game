@@ -9,13 +9,13 @@ const MUSIC_PATHS: Array[String] = [
 ]
 
 const SFX_PATHS: Dictionary = {
-	"click":          "res://audio/sfx/click.ogg",
-	"purchase":       "res://audio/sfx/purchase.ogg",
-	"secret":         "res://audio/sfx/secret.ogg",
-	"secret_collect": "res://audio/sfx/secret_collect.ogg",
-	"achievement":    "res://audio/sfx/achievement.ogg",
-	"narrative":      "res://audio/sfx/narrative.ogg",
-	"breaking_news":  "res://audio/sfx/breaking_news.ogg",
+	"click":          "res://audio/sfx/click.wav",
+	"purchase":       "res://audio/sfx/purchase.wav",
+	"secret":         "res://audio/sfx/secret.wav",
+	"secret_collect": "res://audio/sfx/secret_collect.wav",
+	"achievement":    "res://audio/sfx/achievement.wav",
+	"narrative":      "res://audio/sfx/narrative.wav",
+	"breaking_news":  "res://audio/sfx/breaking_news.wav",
 }
 
 const DEFAULT_MUSIC_DB: float = -6.0

@@ -1,31 +1,31 @@
 # Audio Files
 
-All audio must be **OGG Vorbis** format (.ogg) — Godot 4's preferred streaming format for both music and sfx.
+## Music (ambient loops) — NEEDED
 
-## Music (ambient loops)
+Music must be **OGG Vorbis** (.ogg) for streaming + looping.
+Source via [Suno Pro](https://suno.com) or [Beatoven.ai](https://www.beatoven.ai).
 
-| File | Act | Mood |
-|------|-----|------|
-| `music/act1_ambient.ogg` | Act 1 (< $1M lifetime) | Calm, tropical, innocent |
-| `music/act2_tension.ogg` | Act 2 ($1M – $50M lifetime) | Slightly darker, minor key |
-| `music/act3_danger.ogg` | Act 3 (≥ $50M lifetime) | Tense, ominous |
+| File | Act | Mood | Status |
+|------|-----|------|--------|
+| `music/act1_ambient.ogg` | Act 1 (< $1M lifetime) | Calm, tropical, lounge/bossa | ❌ Missing |
+| `music/act2_tension.ogg` | Act 2 ($1M – $50M lifetime) | Minor key, slightly unsettling | ❌ Missing |
+| `music/act3_danger.ogg` | Act 3 (≥ $50M lifetime) | Tense, crime drama, ominous | ❌ Missing |
 
-Loops are crossfaded over 1.5 seconds when transitioning between acts.
-Music plays at -6 dB by default (not full blast).
+Loops crossfade over 1.5s between acts. Music plays at -6 dB.
 
-## Sound Effects
+## Sound Effects — DONE (Kenney CC0)
 
-| File | Trigger |
-|------|---------|
-| `sfx/click.ogg` | Party button clicked |
-| `sfx/purchase.ogg` | Venue, upgrade, VIP, or staff purchased |
-| `sfx/secret.ogg` | Secret event spawns on island |
-| `sfx/secret_collect.ogg` | Secret event clicked/collected |
-| `sfx/achievement.ogg` | Achievement unlocked (wired by AchievementManager) |
-| `sfx/narrative.ogg` | Narrative event popup appears |
-| `sfx/breaking_news.ogg` | Breaking news modal appears (Act 3 reveal) |
+WAV format. All 7 files sourced from [kenney.nl](https://kenney.nl) interface sounds pack (CC0).
 
-SFX play at 0 dB by default.
+| File | Source | Trigger |
+|------|--------|---------|
+| `sfx/click.wav` | click_001.wav | Party button clicked |
+| `sfx/purchase.wav` | confirmation_001.wav | Venue/upgrade/VIP/staff purchased |
+| `sfx/secret.wav` | pluck_001.wav | Secret event spawns on island |
+| `sfx/secret_collect.wav` | drop_001.wav | Secret event collected |
+| `sfx/achievement.wav` | maximize_001.wav | Achievement unlocked |
+| `sfx/narrative.wav` | open_001.wav | Narrative event popup |
+| `sfx/breaking_news.wav` | glitch_001.wav | Act 3 breaking news reveal |
 
 ## Export Settings
 
