@@ -56,6 +56,20 @@ const ACT3_HEADLINES: Array[String] = [
 	"BREAKING: ASSETS FROZEN AS AUTHORITIES MOVE AGAINST ISLAND OPERATION",
 ]
 
+# Act 4 headlines — cover-up complete, untouchable
+const ACT4_HEADLINES: Array[String] = [
+	"CHARGES DROPPED — PROSECUTORS CITE LACK OF COOPERATING WITNESSES",
+	"KEY WITNESSES UNAVAILABLE FOR TESTIMONY, CASE COLLAPSES",
+	"ISLAND FINANCIER RETURNS TO OPERATIONS FOLLOWING CASE DISMISSAL",
+	"SEALED RECORDS: JUDGE ORDERS DOCUMENTS CLASSIFIED FOR DECADES",
+	"SOURCES: INVESTIGATION QUIETLY CLOSED — NO OFFICIAL REASON GIVEN",
+	"ISLAND COMPOUND RESUMES OPERATIONS AMID RENEWED SECRECY",
+	"NETWORK INTACT: ISLAND OPERATION EXPANDS TO SECOND LOCATION",
+	"POWERFUL CONNECTIONS SHIELD ISLAND FINANCIER FROM PROSECUTION",
+	"NOTHING TO SEE HERE — AUTHORITIES DECLINE FURTHER COMMENT",
+	"THE MATTER HAS BEEN RESOLVED — THAT'S ALL WE'VE BEEN AUTHORIZED TO SAY",
+]
+
 @onready var ticker_label: Label = /TickerLabel
 
 var _current_index: int = 0
@@ -63,8 +77,9 @@ var _scroll_x: float = 0.0
 var _speed: float = 80.0  # pixels per second
 var _current_act: int = 1
 
-const ACT2_THRESHOLD: float = 1000000.0   # M
-const ACT3_THRESHOLD: float = 50000000.0  # 0M
+const ACT2_THRESHOLD: float = 1_000_000.0
+const ACT3_THRESHOLD: float = 50_000_000.0
+const ACT4_THRESHOLD: float = 200_000_000.0
 
 func _ready() -> void:
 	GameState.lifetime_money_changed.connect(_on_lifetime_money_changed)
@@ -95,7 +110,9 @@ func _on_lifetime_money_changed(amount: float) -> void:
 		_current_index = randi() % _current_pool().size()
 
 func _act_for(amount: float) -> int:
-	if amount >= ACT3_THRESHOLD:
+	if amount >= ACT4_THRESHOLD:
+		return 4
+	elif amount >= ACT3_THRESHOLD:
 		return 3
 	elif amount >= ACT2_THRESHOLD:
 		return 2
@@ -107,6 +124,8 @@ func _current_pool() -> Array[String]:
 			return ACT2_HEADLINES
 		3:
 			return ACT3_HEADLINES
+		4:
+			return ACT4_HEADLINES
 		_:
 			if GameState.ghost_mode:
 				return ACT1_GHOST_HEADLINES

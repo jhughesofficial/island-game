@@ -38,6 +38,17 @@ const ACT3_HEADLINES: Array = [
 	"LIVE: Press conference in 10 min",
 ]
 
+const ACT4_HEADLINES: Array = [
+	"Case dismissed — insufficient evidence",
+	"Key witness recants entire testimony",
+	"Prosecutor reassigned mid-trial",
+	"Island: operations resumed quietly",
+	"No charges filed — story goes cold",
+	"Records sealed for 50 years",
+	"Nothing to see here",
+	"Certain stories never get told",
+]
+
 var _headline_lbl: Label
 var _live_dot: Label
 var _cycle_timer: float = 0.0
@@ -138,7 +149,9 @@ func _process(delta: float) -> void:
 
 func _current_pool() -> Array:
 	var lm: float = GameState.lifetime_money
-	if lm >= 50_000_000.0:
+	if lm >= 200_000_000.0:
+		return ACT4_HEADLINES
+	elif lm >= 50_000_000.0:
 		return ACT3_HEADLINES
 	elif lm >= 1_000_000.0:
 		return ACT2_HEADLINES
