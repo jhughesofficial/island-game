@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/components/settings_panel.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/components/StatsPanel.tscn" id="2"]
 
 [node name="SettingsPanel" type="PanelContainer"]
 script = ExtResource("1")
@@ -18,6 +19,9 @@ theme_override_font_sizes/font_size = 18
 [node name="CloseBtn" type="Button" parent="VBoxContainer/HBoxContainer"]
 text = "✕"
 
+[node name="StatisticsBtn" type="Button" parent="VBoxContainer"]
+text = "Statistics"
+
 [node name="MainMenuBtn" type="Button" parent="VBoxContainer"]
 text = "Main Menu"
 
@@ -26,3 +30,5 @@ text = "Reset Save"
 
 [node name="ConfirmReset" type="ConfirmationDialog" parent="."]
 dialog_text = "Reset all progress? This cannot be undone."
+
+[node name="StatsPanel" parent="." instance=ExtResource("2")]

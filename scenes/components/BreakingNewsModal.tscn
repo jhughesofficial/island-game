@@ -1,0 +1,79 @@
+[gd_scene format=3 uid="uid://breaking_news_modal"]
+
+[ext_resource type="Script" path="res://scripts/components/breaking_news_modal.gd" id="1"]
+
+[node name="BreakingNewsModal" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("1")
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.88)
+mouse_filter = 0
+
+[node name="CenterContainer" type="CenterContainer" parent="Overlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Panel" type="PanelContainer" parent="Overlay/CenterContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(640, 400)
+
+[node name="VBox" type="VBoxContainer" parent="Overlay/CenterContainer/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="RedBanner" type="Label" parent="Overlay/CenterContainer/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.1, 0.1, 1)
+theme_override_font_sizes/font_size = 24
+text = "⚡ BREAKING NEWS ⚡"
+horizontal_alignment = 1
+autowrap_mode = 0
+
+[node name="NetworkLabel" type="Label" parent="Overlay/CenterContainer/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+theme_override_font_sizes/font_size = 11
+text = "ISLAND BEAT NIGHTLY — LIVE REPORT"
+horizontal_alignment = 1
+
+[node name="Divider" type="HSeparator" parent="Overlay/CenterContainer/Panel/VBox"]
+layout_mode = 2
+
+[node name="HeadlineLabel" type="Label" parent="Overlay/CenterContainer/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1.0, 0.84, 0.0, 1)
+theme_override_font_sizes/font_size = 20
+text = "FEDERAL AUTHORITIES INVESTIGATING PRIVATE ISLAND OPERATION"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="BodyLabel" type="RichTextLabel" parent="Overlay/CenterContainer/Panel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/default_color = Color(0.85, 0.85, 0.85, 1)
+theme_override_font_sizes/normal_font_size = 13
+bbcode_enabled = true
+text = "Federal investigators have issued subpoenas to at least a dozen individuals linked to a private island resort whose client roster allegedly includes prominent figures from finance, politics, and entertainment.  Sources close to the investigation describe a pattern of undisclosed activities conducted on the property over a period of years, with access tightly controlled and participant records deliberately obscured.  Several high-profile guests are reported to have travelled to the island aboard private aircraft registered to shell companies, raising questions about the extent of institutional knowledge.  Investigators say additional warrants are expected before the end of the week.  [i]The island's owner has not commented.[/i]"
+fit_content = true
+
+[node name="Spacer" type="Control" parent="Overlay/CenterContainer/Panel/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 8)
+
+[node name="ContinueButton" type="Button" parent="Overlay/CenterContainer/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1.0, 0.84, 0.0, 1)
+text = "Continue"
+
+[connection signal="pressed" from="Overlay/CenterContainer/Panel/VBox/ContinueButton" to="." method="_on_continue_pressed"]
