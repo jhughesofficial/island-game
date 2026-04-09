@@ -78,6 +78,10 @@ func _fresh() -> void:
 	GameState.upgrades_purchased  = {}
 	GameState.vips_recruited      = {}
 	GameState.staff_counts        = {}
+	# Reset identity so tests don't inherit multipliers from a loaded save
+	GameState.player_identity         = ""
+	GameState._identity_click_mult    = 1.0
+	GameState._identity_vip_discount  = 1.0
 	GameState._rebuild_rates()
 
 # ── Assertion helpers ─────────────────────────────────────────────
