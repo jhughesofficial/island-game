@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/components/main_menu.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/components/HelpPanel.tscn" id="2"]
 
 [node name="MainMenu" type="Control"]
 anchor_right = 1.0
@@ -45,7 +46,14 @@ text = "Continue"
 custom_minimum_size = Vector2(220, 52)
 alignment = 1
 
+[node name="HowToPlayBtn" type="Button" parent="CenterContainer/VBoxContainer"]
+text = "How to Play"
+custom_minimum_size = Vector2(220, 52)
+alignment = 1
+
 [node name="QuitBtn" type="Button" parent="CenterContainer/VBoxContainer"]
 text = "Quit"
 custom_minimum_size = Vector2(220, 52)
 alignment = 1
+
+[node name="HelpPanel" parent="." instance=ExtResource("2")]
