@@ -31,7 +31,9 @@ func _refresh_list() -> void:
 	var last_shown_name: String = ""
 	for upg in _data_node.UPGRADES:
 		if GameState.upgrades_purchased.get(upg.id, false):
-			last_shown_name = upg.name
+			list.add_child(_make_purchased_row(upg))
+			# Do NOT update last_shown_name — purchased upgrades are done,
+			# so the mystery prereq should only reference the last *available* upgrade.
 			continue
 		if GameState.upgrade_is_available(upg.id):
 			list.add_child(_make_row(upg))
@@ -68,6 +70,35 @@ func _make_row(upg: Dictionary) -> HBoxContainer:
 	btn.disabled = GameState.money < upg.cost
 	btn.pressed.connect(_on_buy.bind(upg.id))
 	row.add_child(btn)
+	return row
+
+func _make_purchased_row(upg: Dictionary) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.name = "upg_" + upg.id + "_owned"
+	row.add_theme_constant_override("separation", 8)
+	row.custom_minimum_size = Vector2(0, 48)
+	row.modulate = Color(0.55, 0.55, 0.55, 1)
+
+	var info := VBoxContainer.new()
+	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	info.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var name_lbl := Label.new()
+	name_lbl.text = upg.name
+	name_lbl.add_theme_font_size_override("font_size", 15)
+	info.add_child(name_lbl)
+	var sub_lbl := Label.new()
+	sub_lbl.text = "✓ Active  |  %s" % _effect_label(upg)
+	sub_lbl.add_theme_font_size_override("font_size", 11)
+	info.add_child(sub_lbl)
+	row.add_child(info)
+
+	var badge := Label.new()
+	badge.text = "✓ Owned"
+	badge.custom_minimum_size = Vector2(100, 0)
+	badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	badge.add_theme_font_size_override("font_size", 12)
+	badge.add_theme_color_override("font_color", Color(0.4, 0.8, 0.4, 1))
+	row.add_child(badge)
 	return row
 
 func _effect_label(upg: Dictionary) -> String:

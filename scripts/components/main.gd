@@ -19,12 +19,14 @@ func _ready() -> void:
 	game_over_overlay.hide()
 	settings_panel.hide()
 	GameState.game_over_triggered.connect(_on_game_over)
+	call_deferred("_apply_split")
 	GameState.offline_earnings_received.connect(_on_offline_earnings)
 	GameState.lifetime_money_changed.connect(_on_lifetime_money_changed)
 	save_timer.timeout.connect(_on_save_timer)
 	save_timer.start(60.0)
 	AchievementManager.achievement_unlocked.connect(_on_achievement_unlocked)
 	TutorialManager.show_hint.connect(_on_tutorial_show_hint)
+	GameState.arrest_countdown_changed.connect(_on_arrest_countdown_changed)
 	get_tree().create_timer(1.0).timeout.connect(func(): TutorialManager.advance_to("click"))
 
 func _on_game_over(ending: String) -> void:
@@ -76,6 +78,15 @@ func _check_narrative_events(amount: float) -> void:
 		GameState.save_game()
 		narrative_modal.show_event(best_event)
 
+var _arrest_warned: bool = false
+
+func _on_arrest_countdown_changed(seconds: float) -> void:
+	if seconds > 0.0 and not _arrest_warned:
+		_arrest_warned = true
+		toast.show_message("⚠ HEAT CRITICAL — Find a secret or recruit a VIP to reduce heat!", 6.0)
+	elif seconds <= 0.0:
+		_arrest_warned = false
+
 func _on_achievement_unlocked(_id: String, achievement_name: String) -> void:
 	toast.show_message("🏆 " + achievement_name, 4.0)
 
@@ -93,6 +104,12 @@ func _unhandled_input(event: InputEvent) -> void:
 			breaking_news_modal.hide()
 		elif game_over_overlay.visible:
 			pass  # do not dismiss game over with Escape
+
+func _apply_split() -> void:
+	# Right panel fixed at ~360px; island fills the rest.
+	# Keeps the panel tight on all screen sizes.
+	var vp_w := int(get_viewport().get_visible_rect().size.x)
+	$HSplitContainer.split_offset = vp_w - 360
 
 func _on_settings_button_pressed() -> void:
 	settings_panel.visible = not settings_panel.visible

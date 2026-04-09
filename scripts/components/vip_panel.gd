@@ -44,7 +44,8 @@ func _refresh_list() -> void:
 	for vip in _data_node.VIPS:
 		if GameState.vips_recruited.get(vip.id, false):
 			list.add_child(_make_recruited_row(vip))
-			last_shown_name = vip.name
+			# Do NOT update last_shown_name — recruited VIPs are already unlocked,
+			# so the mystery prereq hint should only reference the last *available* VIP.
 			continue
 		if not separator_added and has_recruited and has_available:
 			var sep := HSeparator.new()

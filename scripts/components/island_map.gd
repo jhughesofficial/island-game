@@ -1,7 +1,7 @@
 extends Control
 
 const VENUE_POSITIONS: Dictionary = {
-	"bonfire":   Vector2(0.15, 0.75),
+	"bonfire":   Vector2(0.25, 0.60),  # was (0.15,0.75) — below island polygon; moved onto SW coast
 	"yacht":     Vector2(0.05, 0.55),
 	"villa":     Vector2(0.55, 0.30),
 	"jet":       Vector2(0.70, 0.65),
@@ -24,6 +24,10 @@ const VENUE_EMOJIS: Dictionary = {
 
 const VENUE_SIZE: Vector2 = Vector2(52, 52)
 
+# Margin applied to the island polygon so it doesn't fill edge-to-edge.
+# Venue positions use the same factor so icons stay on the island.
+const POLY_MARGIN: float = 0.08
+
 # Secret spawn timing
 const SECRET_FADE_DURATION: float  = 0.3
 const SECRET_LIFETIME:      float  = 15.0
@@ -43,23 +47,23 @@ const OCEAN_COLOR_LIGHT: Color = Color(0.05, 0.15, 0.27, 1.0)
 # Margin so buttons don't clip the island edge (normalised units)
 const SECRET_MARGIN: float = 0.10
 
-const ISLAND_POINTS_NORM: PackedVector2Array = PackedVector2Array(
-	0.08, 0.42,  # NW peninsula tip
-	0.15, 0.32,  # NW coast
-	0.28, 0.25,  # N coast west
-	0.45, 0.22,  # N coast center
-	0.62, 0.26,  # N coast east
-	0.78, 0.32,  # NE corner
-	0.88, 0.42,  # E tip
-	0.85, 0.55,  # SE coast
-	0.72, 0.65,  # S coast east
-	0.55, 0.70,  # S coast center-east
-	0.48, 0.72,  # S coast dock indent
-	0.38, 0.70,  # S coast center-west
-	0.22, 0.63,  # SW coast
-	0.10, 0.54,  # W coast
-	0.06, 0.48   # NW coast lower
-)
+var ISLAND_POINTS_NORM: PackedVector2Array = PackedVector2Array([
+	Vector2(0.08, 0.42),  # NW peninsula tip
+	Vector2(0.15, 0.32),  # NW coast
+	Vector2(0.28, 0.25),  # N coast west
+	Vector2(0.45, 0.22),  # N coast center
+	Vector2(0.62, 0.26),  # N coast east
+	Vector2(0.78, 0.32),  # NE corner
+	Vector2(0.88, 0.42),  # E tip
+	Vector2(0.85, 0.55),  # SE coast
+	Vector2(0.72, 0.65),  # S coast east
+	Vector2(0.55, 0.70),  # S coast center-east
+	Vector2(0.48, 0.72),  # S coast dock indent
+	Vector2(0.38, 0.70),  # S coast center-west
+	Vector2(0.22, 0.63),  # SW coast
+	Vector2(0.10, 0.54),  # W coast
+	Vector2(0.06, 0.48),  # NW coast lower
+])
 
 const SHADOW_OFFSET: Vector2 = Vector2(4.0, 6.0)
 
@@ -118,6 +122,22 @@ func _ready() -> void:
 	_schedule_next_seagull()
 	_setup_guest_count_label()
 	_setup_tv_overlay()
+	_start_throw_btn_pulse()
+
+func _start_throw_btn_pulse() -> void:
+	# Only pulse until the player first clicks — stops on first party throw
+	if GameState.lifetime_money > 0.0:
+		return  # already played before, no need to prompt
+	var tween := create_tween()
+	tween.set_loops()
+	tween.tween_property(throw_btn, "modulate", Color(1.25, 1.15, 0.5, 1.0), 0.65) \
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tween.tween_property(throw_btn, "modulate", Color(1.0, 1.0, 1.0, 1.0), 0.65) \
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	throw_btn.pressed.connect(func():
+		tween.kill()
+		throw_btn.modulate = Color(1, 1, 1, 1)
+	, CONNECT_ONE_SHOT)
 
 func _setup_tv_overlay() -> void:
 	var tv = load("res://scripts/components/tv_overlay.gd").new()
@@ -136,11 +156,13 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _rebuild_polygon() -> void:
 	var s: Vector2 = size
+	var margin_px := s * POLY_MARGIN
+	var draw_size := s * (1.0 - 2.0 * POLY_MARGIN)
 	var pts: PackedVector2Array = PackedVector2Array()
 	var count: int = ISLAND_POINTS_NORM.size()
 	pts.resize(count)
 	for i in count:
-		pts[i] = ISLAND_POINTS_NORM[i] * s
+		pts[i] = margin_px + ISLAND_POINTS_NORM[i] * draw_size
 	island_polygon.polygon = pts
 	var shadow_pts: PackedVector2Array = PackedVector2Array()
 	shadow_pts.resize(count)
@@ -161,6 +183,7 @@ func _setup_staff_rate_label() -> void:
 	_staff_rate_label.offset_top    = -28.0
 	_staff_rate_label.offset_right  = -8.0
 	_staff_rate_label.offset_bottom = -6.0
+	_staff_rate_label.mouse_filter  = Control.MOUSE_FILTER_IGNORE
 	add_child(_staff_rate_label)
 	_update_staff_rate_label()
 
@@ -176,7 +199,7 @@ func _update_staff_rate_label() -> void:
 	else:
 		_staff_rate_label.visible = false
 
-func _on_staff_count_changed(_count: int) -> void:
+func _on_staff_count_changed(_id: String, _count: int) -> void:
 	_update_staff_rate_label()
 
 func _setup_guest_count_label() -> void:
@@ -192,6 +215,7 @@ func _setup_guest_count_label() -> void:
 	_guest_count_label.offset_top    = -26.0
 	_guest_count_label.offset_right  = 120.0
 	_guest_count_label.offset_bottom = -6.0
+	_guest_count_label.mouse_filter  = Control.MOUSE_FILTER_IGNORE
 	add_child(_guest_count_label)
 	_update_guest_count()
 
@@ -242,6 +266,7 @@ func _setup_seagull() -> void:
 	_seagull_label.text = "🦅"
 	_seagull_label.add_theme_font_size_override("font_size", 18)
 	_seagull_label.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 1.0))
+	_seagull_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_seagull_label.modulate.a = 0.0
 	add_child(_seagull_label)
 	# Mark as inactive (null means "no active flight"; we'll toggle via modulate)
@@ -259,6 +284,7 @@ func _fly_seagull() -> void:
 		gull.text = "🦅"
 		gull.add_theme_font_size_override("font_size", 18)
 		gull.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 1.0))
+		gull.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		gull.modulate.a = 0.0
 		add_child(gull)
 
@@ -481,26 +507,64 @@ func _show_venue(venue_id: String) -> void:
 func _reposition_venue(venue_id: String, node: Control) -> void:
 	var pos_norm: Vector2 = VENUE_POSITIONS[venue_id]
 	var node_size: Vector2 = node.size if node.size != Vector2.ZERO else node.custom_minimum_size
-	node.position = pos_norm * venues_layer.size - node_size * 0.5
+	# Apply same margin as the polygon so venue icons stay on the island
+	var adjusted := Vector2(POLY_MARGIN, POLY_MARGIN) + pos_norm * (1.0 - 2.0 * POLY_MARGIN)
+	node.position = adjusted * venues_layer.size - node_size * 0.5
 
 # ── Click helpers ─────────────────────────────────────────────────────────────
 
 func _on_throw_party() -> void:
 	var earned: float = GameState.click_party()
 	AudioManager.play_sfx("click")
-	_play_click_particles()
+	_spawn_island_burst()
 	_spawn_click_label(earned)
 	TutorialManager.advance_to("venue")
 
-func _play_click_particles() -> void:
-	particles.restart()
-	particles.emitting = true
+
+const _BURST_COLORS: Array[Color] = [
+	Color(0.788, 0.659, 0.298, 1.0),  # gold
+	Color(1.0,   0.92,  0.35,  1.0),  # yellow
+	Color(1.0,   0.45,  0.45,  1.0),  # red
+	Color(0.45,  0.85,  1.0,   1.0),  # blue
+	Color(0.5,   1.0,   0.55,  1.0),  # green
+	Color(1.0,   0.55,  1.0,   1.0),  # pink
+	Color(1.0,   0.65,  0.2,   1.0),  # orange
+]
+
+func _spawn_island_burst() -> void:
+	# Pick a random point within the island's drawn bounds
+	var s := size
+	var margin_px := s * POLY_MARGIN
+	var draw_size := s * (1.0 - 2.0 * POLY_MARGIN)
+	# Island polygon spans roughly x 0.08–0.88, y 0.22–0.72 — stay inside that
+	var norm := Vector2(randf_range(0.12, 0.82), randf_range(0.27, 0.67))
+	var pos := margin_px + norm * draw_size
+
+	var burst := CPUParticles2D.new()
+	burst.position = pos
+	burst.z_index = 1
+	burst.one_shot = true
+	burst.explosiveness = 0.95
+	burst.amount = 28
+	burst.lifetime = 1.1
+	burst.direction = Vector2(0.0, -1.0)
+	burst.spread = 85.0
+	burst.gravity = Vector2(0.0, 160.0)
+	burst.initial_velocity_min = 70.0
+	burst.initial_velocity_max = 210.0
+	burst.scale_amount_min = 4.0
+	burst.scale_amount_max = 10.0
+	burst.color = _BURST_COLORS[randi() % _BURST_COLORS.size()]
+	burst.emitting = true
+	add_child(burst)
+	get_tree().create_timer(burst.lifetime + 0.2).timeout.connect(burst.queue_free)
 
 func _spawn_click_label(amount: float) -> void:
 	var lbl := Label.new()
 	lbl.text = "+" + NumberFormatter.format(amount)
 	lbl.add_theme_font_size_override("font_size", 18)
 	lbl.add_theme_color_override("font_color", Color(0.788, 0.659, 0.298, 1))
+	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	lbl.position = throw_btn.position + Vector2(randf_range(60, throw_btn.size.x - 60), -20)
 	add_child(lbl)
 	var tween := create_tween()
@@ -626,6 +690,7 @@ func _spawn_secret_label(pos: Vector2, text: String, color: Color = Color(0.788,
 	lbl.text = text
 	lbl.add_theme_font_size_override("font_size", 16)
 	lbl.add_theme_color_override("font_color", color)
+	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	lbl.position = pos
 	add_child(lbl)
 	var tween := create_tween()

@@ -63,7 +63,7 @@ var _upgrade_data: Node
 var _staff_data: Node
 
 const HEAT_CRITICAL: float = 5.0
-const HEAT_CRITICAL_COUNTDOWN: float = 60.0
+const HEAT_CRITICAL_COUNTDOWN: float = 90.0
 var _critical_timer: float = 0.0
 var _is_critical: bool = false
 
