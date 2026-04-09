@@ -23,6 +23,8 @@ func _ready() -> void:
 	save_timer.timeout.connect(_on_save_timer)
 	save_timer.start(60.0)
 	AchievementManager.achievement_unlocked.connect(_on_achievement_unlocked)
+	TutorialManager.show_hint.connect(_on_tutorial_show_hint)
+	get_tree().create_timer(1.0).timeout.connect(func(): TutorialManager.advance_to("click"))
 
 func _on_game_over(ending: String) -> void:
 	if ending not in GameState.endings_reached:
@@ -43,6 +45,13 @@ func _on_lifetime_money_changed(amount: float) -> void:
 		GameState.save_game()
 		breaking_news_modal.show_modal()
 	_check_narrative_events(amount)
+	# Tutorial milestones
+	if amount >= 50.0:
+		TutorialManager.advance_to("upgrade")
+	if amount >= 500.0:
+		TutorialManager.advance_to("vip")
+	if amount >= 5000.0:
+		TutorialManager.mark_complete()
 
 func _check_narrative_events(amount: float) -> void:
 	var best_event: Dictionary = {}
@@ -77,3 +86,25 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _on_settings_button_pressed() -> void:
 	settings_panel.visible = not settings_panel.visible
+
+func _on_tutorial_show_hint(_hint_id: String, text: String, target_position: Vector2) -> void:
+	var lbl := Label.new()
+	lbl.text = text
+	lbl.add_theme_font_size_override("font_size", 13)
+	lbl.add_theme_color_override("font_color", Color(0.95, 0.82, 0.25, 1.0))
+	lbl.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.8))
+	lbl.add_theme_constant_override("shadow_offset_x", 1)
+	lbl.add_theme_constant_override("shadow_offset_y", 1)
+	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	lbl.position = target_position
+	lbl.modulate.a = 0.0
+	add_child(lbl)
+
+	var tween := create_tween()
+	# Fade in
+	tween.tween_property(lbl, "modulate:a", 1.0, 0.3).set_ease(Tween.EASE_OUT)
+	# Hold for 8 seconds
+	tween.tween_interval(8.0)
+	# Fade out
+	tween.tween_property(lbl, "modulate:a", 0.0, 0.5).set_ease(Tween.EASE_IN)
+	tween.tween_callback(lbl.queue_free)

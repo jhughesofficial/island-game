@@ -70,11 +70,23 @@ const SHADOW_OFFSET: Vector2 = Vector2(4.0, 6.0)
 @onready var particles:      CPUParticles2D = $CPUParticles2D
 @onready var ocean_bg:       ColorRect      = $OceanBg
 
+const VENUE_GUEST_BASES: Dictionary = {
+	"bonfire":   8,
+	"yacht":     12,
+	"villa":     20,
+	"jet":       6,
+	"offshore":  0,
+	"shell":     0,
+	"political": 4,
+	"blackout":  2,
+}
+
 var _venue_nodes:       Dictionary = {}
 var _secret_timer:      float      = 0.0
 var _active_secret:     Control    = null
 var _secret_data:       Node       = null
 var _staff_rate_label:  Label      = null
+var _guest_count_label: Label      = null
 var _seagull_timer:     float      = 0.0
 var _seagull_label:     Label      = null
 var _tooltip:           PanelContainer = null
@@ -104,6 +116,7 @@ func _ready() -> void:
 	_start_ocean_shimmer()
 	_setup_seagull()
 	_schedule_next_seagull()
+	_setup_guest_count_label()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not event is InputEventKey:
@@ -160,6 +173,38 @@ func _update_staff_rate_label() -> void:
 
 func _on_staff_count_changed(_count: int) -> void:
 	_update_staff_rate_label()
+
+func _setup_guest_count_label() -> void:
+	_guest_count_label = Label.new()
+	_guest_count_label.name = "GuestCountLabel"
+	_guest_count_label.add_theme_font_size_override("font_size", 12)
+	_guest_count_label.add_theme_color_override("font_color", Color(0.9, 0.95, 1.0, 0.7))
+	_guest_count_label.anchor_left   = 0.0
+	_guest_count_label.anchor_top    = 1.0
+	_guest_count_label.anchor_right  = 0.0
+	_guest_count_label.anchor_bottom = 1.0
+	_guest_count_label.offset_left   = 8.0
+	_guest_count_label.offset_top    = -26.0
+	_guest_count_label.offset_right  = 120.0
+	_guest_count_label.offset_bottom = -6.0
+	add_child(_guest_count_label)
+	_update_guest_count()
+
+func _update_guest_count() -> void:
+	if _guest_count_label == null:
+		return
+	var total: int = 0
+	for venue_id in VENUE_GUEST_BASES:
+		var base: int = VENUE_GUEST_BASES[venue_id]
+		if base == 0:
+			continue
+		var count: int = GameState.venue_counts.get(venue_id, 0)
+		total += count * base
+	if total == 0:
+		_guest_count_label.visible = false
+	else:
+		_guest_count_label.text = "👥 %d guests" % total
+		_guest_count_label.visible = true
 
 func _process(delta: float) -> void:
 	# Secret spawning
@@ -341,6 +386,7 @@ func _sync_from_state() -> void:
 	for venue_id in GameState.venue_counts:
 		if GameState.venue_counts[venue_id] > 0:
 			_show_venue(venue_id)
+	_update_guest_count()
 
 func _on_game_reset() -> void:
 	# Clear any active secret first, then sync venues
@@ -366,6 +412,7 @@ func _on_venue_count_changed(venue_id: String, count: int) -> void:
 			return
 		count_lbl.text = "x%d" % count
 		count_lbl.visible = count > 1
+	_update_guest_count()
 
 func _show_venue(venue_id: String) -> void:
 	if _venue_nodes.has(venue_id):
@@ -438,6 +485,7 @@ func _on_throw_party() -> void:
 	AudioManager.play_sfx("click")
 	_play_click_particles()
 	_spawn_click_label(earned)
+	TutorialManager.advance_to("venue")
 
 func _play_click_particles() -> void:
 	particles.restart()

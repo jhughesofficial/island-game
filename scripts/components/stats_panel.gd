@@ -13,9 +13,20 @@ extends Control
 @onready var staff_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/StaffVal
 @onready var secrets_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/SecretsVal
 @onready var auto_clicks_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/AutoClicksVal
+@onready var peak_income_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/PeakIncomeVal
+
+var _peak_income_per_second: float = 0.0
 
 func _ready() -> void:
 	close_btn.pressed.connect(func(): hide())
+
+func _process(_delta: float) -> void:
+	if not visible:
+		return
+	var current_ips: float = GameState.get_income_per_second()
+	if current_ips > _peak_income_per_second:
+		_peak_income_per_second = current_ips
+		peak_income_val.text = NumberFormatter.format_rate(_peak_income_per_second)
 
 func show_panel() -> void:
 	_refresh()
@@ -48,3 +59,4 @@ func _refresh() -> void:
 
 	secrets_val.text = str(GameState.secrets_found)
 	auto_clicks_val.text = "%.1f/sec" % GameState.get_auto_clicks_per_second()
+	peak_income_val.text = NumberFormatter.format_rate(_peak_income_per_second)

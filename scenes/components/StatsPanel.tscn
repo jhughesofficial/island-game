@@ -177,3 +177,14 @@ theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
 [node name="AutoClicksVal" type="Label" parent="Panel/VBoxContainer/ScrollContainer/StatsGrid/AutoClicksRow"]
 horizontal_alignment = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="PeakIncomeRow" type="HBoxContainer" parent="Panel/VBoxContainer/ScrollContainer/StatsGrid"]
+
+[node name="PeakIncomeLabel" type="Label" parent="Panel/VBoxContainer/ScrollContainer/StatsGrid/PeakIncomeRow"]
+size_flags_horizontal = 3
+text = "Peak income/s"
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+
+[node name="PeakIncomeVal" type="Label" parent="Panel/VBoxContainer/ScrollContainer/StatsGrid/PeakIncomeRow"]
+horizontal_alignment = 2
+theme_override_colors/font_color = Color(0.788, 0.659, 0.298, 1)

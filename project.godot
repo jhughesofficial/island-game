@@ -25,6 +25,7 @@ GameState="*res://scripts/autoloads/GameState.gd"
 NumberFormatter="*res://scripts/utils/NumberFormatter.gd"
 AudioManager="*res://scripts/autoloads/AudioManager.gd"
 AchievementManager="*res://scripts/autoloads/AchievementManager.gd"
+TutorialManager="*res://scripts/autoloads/TutorialManager.gd"
 MCPRuntime="*uid://dbka41haun54r"
 
 [editor_plugins]
