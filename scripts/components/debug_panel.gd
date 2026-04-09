@@ -17,6 +17,10 @@ func _ready() -> void:
 	$VBoxContainer/AddPI.pressed.connect(_on_add_pi)
 	$VBoxContainer/TestRetire.pressed.connect(_on_test_retire)
 	$VBoxContainer/TestSuicide.pressed.connect(_on_test_suicide)
+	$VBoxContainer/TriggerSecret.pressed.connect(_on_trigger_secret)
+	$VBoxContainer/TriggerNarrative.pressed.connect(_on_trigger_narrative)
+	$VBoxContainer/UnlockAllVenues.pressed.connect(_on_unlock_all_venues)
+	$VBoxContainer/UnlockGhost.pressed.connect(_on_unlock_ghost)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -55,3 +59,26 @@ func _on_test_retire() -> void:
 
 func _on_test_suicide() -> void:
 	GameState.game_over_triggered.emit("suicide")
+
+func _on_trigger_secret() -> void:
+	var island_map = get_tree().get_first_node_in_group("island_map")
+	if island_map and island_map.has_method("_spawn_secret"):
+		island_map._spawn_secret()
+
+func _on_trigger_narrative() -> void:
+	var narrative_data = load("res://scripts/data/NarrativeEventData.gd").new()
+	var narrative_modal = get_tree().get_first_node_in_group("narrative_modal")
+	for event in narrative_data.EVENTS:
+		if event.id not in GameState.narrative_events_seen:
+			GameState.narrative_events_seen.append(event.id)
+			if narrative_modal:
+				narrative_modal.show_event(event)
+			break
+
+func _on_unlock_all_venues() -> void:
+	var venue_data = load("res://scripts/data/VenueData.gd").new()
+	for venue in venue_data.VENUES:
+		GameState.buy_venue_n(venue.id, 10)
+
+func _on_unlock_ghost() -> void:
+	GameState.unlock_ghost_mode()

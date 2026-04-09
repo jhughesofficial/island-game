@@ -66,6 +66,7 @@ var _secret_data:      Node       = null
 var _staff_rate_label: Label      = null
 
 func _ready() -> void:
+	add_to_group("island_map")
 	GameState.venue_count_changed.connect(_on_venue_count_changed)
 	GameState.game_reset.connect(_on_game_reset)
 	throw_btn.pressed.connect(_on_throw_party)
@@ -77,6 +78,17 @@ func _ready() -> void:
 	_setup_staff_rate_label()
 	if GameState.has_signal("staff_count_changed"):
 		GameState.staff_count_changed.connect(_on_staff_count_changed)
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not event is InputEventKey:
+		return
+	if not event.pressed or event.echo:
+		return
+	# Skip if a UI element has keyboard focus (e.g. a modal/input is open)
+	if get_viewport().gui_get_focus_owner() != null:
+		return
+	if event.keycode == KEY_SPACE:
+		_on_throw_party()
 
 func _rebuild_polygon() -> void:
 	var s: Vector2 = size

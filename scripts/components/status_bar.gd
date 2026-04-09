@@ -21,6 +21,13 @@ func _ready() -> void:
 	settings_btn.pressed.connect(_on_settings_btn_pressed)
 	retire_btn.pressed.connect(_on_retire_pressed)
 	arrest_label.hide()
+	if GameState.ghost_mode:
+		var ghost_badge := Label.new()
+		ghost_badge.text = "👻 GHOST"
+		ghost_badge.add_theme_color_override("font_color", Color(0.75, 0.88, 0.95, 1))
+		ghost_badge.add_theme_font_size_override("font_size", 12)
+		$MarginContainer/HBoxContainer.add_child(ghost_badge)
+		$MarginContainer/HBoxContainer.move_child(ghost_badge, 1)
 	_refresh_all()
 
 func _process(delta: float) -> void:

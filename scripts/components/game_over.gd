@@ -27,6 +27,7 @@ func show_ending(ending: String) -> void:
 			headline.add_theme_color_override("font_color", Color(0.788, 0.659, 0.298))
 			body_label.text = "You saw it coming.\n\nThe accounts are offshore. The jet is fueled.\nThe island was just the beginning."
 			restart_btn.text = "Play Again"
+			GameState.unlock_ghost_mode()
 		_:
 			headline.text = "GAME OVER"
 			headline.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))

@@ -60,5 +60,20 @@ func _check_narrative_events(amount: float) -> void:
 func _on_achievement_unlocked(_id: String, achievement_name: String) -> void:
 	toast.show_message("🏆 " + achievement_name, 4.0)
 
+func _unhandled_input(event: InputEvent) -> void:
+	if not event is InputEventKey:
+		return
+	if not event.pressed or event.echo:
+		return
+	if event.keycode == KEY_ESCAPE:
+		if settings_panel.visible:
+			settings_panel.hide()
+		elif narrative_modal.visible:
+			narrative_modal.hide()
+		elif breaking_news_modal.visible:
+			breaking_news_modal.hide()
+		elif game_over_overlay.visible:
+			pass  # do not dismiss game over with Escape
+
 func _on_settings_button_pressed() -> void:
 	settings_panel.visible = not settings_panel.visible

@@ -30,6 +30,18 @@ const ACT2_HEADLINES: Array[String] = [
 	"ISLAND COMPOUND REPORTEDLY OFF-LIMITS TO LOCAL AUTHORITIES WITHOUT INVITATION",
 ]
 
+# Ghost Mode Act 1 headlines — sinister from the start
+const ACT1_GHOST_HEADLINES: Array[String] = [
+	"SOURCES: MYSTERIOUS NEW OPERATION QUIETLY REOPENED ON PRIVATE ISLAND",
+	"LOCAL FISHERMEN REPORT UNUSUAL VESSEL TRAFFIC NEAR RESTRICTED WATERS",
+	"ISLAND RESORT RESUMES OPERATIONS UNDER UNKNOWN MANAGEMENT",
+	"INTELLIGENCE SOURCES: KNOWN LOCATION ACTIVE AGAIN",
+	"ANONYMOUS BENEFACTOR BEHIND REVIVED ISLAND ESTATE, SOURCES SAY",
+	"UNDISCLOSED INVESTORS REPORTEDLY FUND RAPID ISLAND RECONSTRUCTION",
+	"ISLAND UNDER NEW MANAGEMENT: STAFF SWORN TO SECRECY FROM DAY ONE",
+	"MARITIME AGENCY FLAGS UNREGISTERED VESSELS DOCKED AT PRIVATE ISLAND",
+]
+
 # Act 3 headlines — breaking news, federal investigation
 const ACT3_HEADLINES: Array[String] = [
 	"BREAKING: FEDERAL INVESTIGATION OPENED INTO ISLAND OPERATION",
@@ -61,6 +73,9 @@ func _ready() -> void:
 	_current_index = randi() % pool.size()
 	ticker_label.text = "  ★  " + pool[_current_index] + "  ★  " + pool[(_current_index + 1) % pool.size()]
 	_scroll_x = 0.0
+	# Ghost mode uses sinister Act 1 pool — reassign after initial setup
+	if GameState.ghost_mode and _current_act == 1:
+		_current_index = randi() % ACT1_GHOST_HEADLINES.size()
 
 func _process(delta: float) -> void:
 	_scroll_x -= _speed * delta
@@ -93,4 +108,6 @@ func _current_pool() -> Array[String]:
 		3:
 			return ACT3_HEADLINES
 		_:
+			if GameState.ghost_mode:
+				return ACT1_GHOST_HEADLINES
 			return ACT1_HEADLINES

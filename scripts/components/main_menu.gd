@@ -4,10 +4,14 @@ extends Control
 @onready var continue_btn: Button = $CenterContainer/VBoxContainer/ContinueBtn
 @onready var how_to_play_btn: Button = $CenterContainer/VBoxContainer/HowToPlayBtn
 @onready var quit_btn: Button = $CenterContainer/VBoxContainer/QuitBtn
+@onready var subtitle_label: Label = $CenterContainer/VBoxContainer/Subtitle
 @onready var help_panel = $HelpPanel
 
 func _ready() -> void:
 	continue_btn.disabled = not FileAccess.file_exists("user://save.json")
+	if GameState.ghost_mode:
+		subtitle_label.text = "Ghost Mode — A Private Resort Management Sim"
+		subtitle_label.add_theme_color_override("font_color", Color(0.75, 0.88, 0.95, 1))
 	new_game_btn.pressed.connect(_on_new_game)
 	continue_btn.pressed.connect(_on_continue)
 	how_to_play_btn.pressed.connect(func(): help_panel.show_panel())

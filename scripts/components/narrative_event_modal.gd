@@ -7,6 +7,7 @@ extends Control
 @onready var noted_button: Button = $Overlay/CenterContainer/Panel/VBox/NotedButton
 
 func _ready() -> void:
+	add_to_group("narrative_modal")
 	hide()
 
 func show_event(event: Dictionary) -> void:

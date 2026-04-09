@@ -12,6 +12,10 @@ var narrative_events_seen: Array = []
 var heat_scare_survived: bool = false
 var endings_reached: Array = []
 
+# ── Prestige (Ghost Mode) ────────────────────────────────────────
+var ghost_mode: bool = false
+var ghost_multiplier: float = 1.5
+
 # { venue_id: int }
 var venue_counts: Dictionary = {}
 # { upgrade_id: bool }
@@ -61,6 +65,7 @@ func _ready() -> void:
 	_vip_data = load("res://scripts/data/VIPData.gd").new()
 	_upgrade_data = load("res://scripts/data/UpgradeData.gd").new()
 	_staff_data = load("res://scripts/data/StaffData.gd").new()
+	load_prestige()
 	load_game()
 	_rebuild_rates()
 
@@ -281,6 +286,8 @@ func _rebuild_rates() -> void:
 		_income_per_second += venue.base_income * count * qty_mult * upg_mult
 		_heat_per_second += venue.heat_rate * count
 	_income_per_second *= _vip_multiplier
+	if ghost_mode:
+		_income_per_second *= ghost_multiplier
 	if vips_recruited.get("president", false):
 		_heat_per_second = maxf(0.0, _heat_per_second - 0.02)
 
@@ -427,6 +434,33 @@ func load_game() -> void:
 
 func _emit_offline_earnings(amount: float) -> void:
 	offline_earnings_received.emit(amount)
+
+# ── Prestige Save / Load ─────────────────────────────────────────
+const PRESTIGE_PATH: String = "user://prestige.json"
+
+func save_prestige() -> void:
+	var data: Dictionary = {"ghost_mode": ghost_mode}
+	var file = FileAccess.open(PRESTIGE_PATH, FileAccess.WRITE)
+	if file:
+		file.store_string(JSON.stringify(data))
+		file.close()
+
+func load_prestige() -> void:
+	if not FileAccess.file_exists(PRESTIGE_PATH):
+		return
+	var file = FileAccess.open(PRESTIGE_PATH, FileAccess.READ)
+	if not file:
+		return
+	var raw: String = file.get_as_text()
+	file.close()
+	var parsed = JSON.parse_string(raw)
+	if parsed == null or not parsed is Dictionary:
+		return
+	ghost_mode = bool(parsed.get("ghost_mode", false))
+
+func unlock_ghost_mode() -> void:
+	ghost_mode = true
+	save_prestige()
 
 func reset_game() -> void:
 	money = 0.0
