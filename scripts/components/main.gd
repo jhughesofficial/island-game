@@ -22,8 +22,11 @@ func _ready() -> void:
 	GameState.lifetime_money_changed.connect(_on_lifetime_money_changed)
 	save_timer.timeout.connect(_on_save_timer)
 	save_timer.start(60.0)
+	AchievementManager.achievement_unlocked.connect(_on_achievement_unlocked)
 
 func _on_game_over(ending: String) -> void:
+	if ending not in GameState.endings_reached:
+		GameState.endings_reached.append(ending)
 	game_over_overlay.show_ending(ending)
 	game_over_overlay.show()
 	save_timer.stop()
@@ -53,6 +56,9 @@ func _check_narrative_events(amount: float) -> void:
 		GameState.narrative_events_seen.append(best_event.id)
 		GameState.save_game()
 		narrative_modal.show_event(best_event)
+
+func _on_achievement_unlocked(_id: String, achievement_name: String) -> void:
+	toast.show_message("🏆 " + achievement_name, 4.0)
 
 func _on_settings_button_pressed() -> void:
 	settings_panel.visible = not settings_panel.visible

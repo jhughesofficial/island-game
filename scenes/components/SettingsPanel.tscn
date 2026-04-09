@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/components/settings_panel.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/components/StatsPanel.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/components/AchievementsPanel.tscn" id="3"]
 
 [node name="SettingsPanel" type="PanelContainer"]
 script = ExtResource("1")
@@ -22,13 +23,55 @@ text = "✕"
 [node name="StatisticsBtn" type="Button" parent="VBoxContainer"]
 text = "Statistics"
 
+[node name="AchievementsBtn" type="Button" parent="VBoxContainer"]
+text = "Achievements"
+
 [node name="MainMenuBtn" type="Button" parent="VBoxContainer"]
 text = "Main Menu"
 
 [node name="ResetBtn" type="Button" parent="VBoxContainer"]
 text = "Reset Save"
 
+[node name="AudioSection" type="VBoxContainer" parent="VBoxContainer"]
+theme_override_constants/separation = 6
+
+[node name="AudioTitle" type="Label" parent="VBoxContainer/AudioSection"]
+text = "Audio"
+theme_override_font_sizes/font_size = 14
+
+[node name="MusicRow" type="HBoxContainer" parent="VBoxContainer/AudioSection"]
+theme_override_constants/separation = 8
+
+[node name="MusicLabel" type="Label" parent="VBoxContainer/AudioSection/MusicRow"]
+custom_minimum_size = Vector2(100, 0)
+text = "Music"
+vertical_alignment = 1
+
+[node name="MusicSlider" type="HSlider" parent="VBoxContainer/AudioSection/MusicRow"]
+size_flags_horizontal = 3
+min_value = -40.0
+max_value = 0.0
+step = 1.0
+value = -6.0
+
+[node name="SFXRow" type="HBoxContainer" parent="VBoxContainer/AudioSection"]
+theme_override_constants/separation = 8
+
+[node name="SFXLabel" type="Label" parent="VBoxContainer/AudioSection/SFXRow"]
+custom_minimum_size = Vector2(100, 0)
+text = "SFX"
+vertical_alignment = 1
+
+[node name="SFXSlider" type="HSlider" parent="VBoxContainer/AudioSection/SFXRow"]
+size_flags_horizontal = 3
+min_value = -40.0
+max_value = 0.0
+step = 1.0
+value = 0.0
+
 [node name="ConfirmReset" type="ConfirmationDialog" parent="."]
 dialog_text = "Reset all progress? This cannot be undone."
 
 [node name="StatsPanel" parent="." instance=ExtResource("2")]
+
+[node name="AchievementsPanel" parent="." instance=ExtResource("3")]

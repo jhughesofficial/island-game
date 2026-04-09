@@ -10,6 +10,7 @@ func _ready() -> void:
 	hide()
 
 func show_modal() -> void:
+	AudioManager.play_sfx("breaking_news")
 	show()
 	overlay.modulate.a = 0.0
 	panel.scale = Vector2(0.8, 0.8)

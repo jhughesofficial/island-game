@@ -10,6 +10,7 @@ func _ready() -> void:
 	hide()
 
 func show_event(event: Dictionary) -> void:
+	AudioManager.play_sfx("narrative")
 	title_label.text = event.get("title", "")
 	body_label.text = event.get("body", "")
 	show()

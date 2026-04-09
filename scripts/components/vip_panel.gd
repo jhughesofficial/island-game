@@ -126,7 +126,8 @@ func _make_mystery_row(prereq_name: String) -> HBoxContainer:
 	return row
 
 func _on_recruit(vip_id: String) -> void:
-	GameState.recruit_vip(vip_id)
+	if GameState.recruit_vip(vip_id):
+		AudioManager.play_sfx("purchase")
 
 func _on_lifetime_changed(_amount: float) -> void:
 	var sig := _get_sig()

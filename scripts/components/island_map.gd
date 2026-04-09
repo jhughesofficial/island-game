@@ -98,6 +98,7 @@ func _reposition_venue(venue_id: String, node: ColorRect) -> void:
 
 func _on_throw_party() -> void:
 	var earned: float = GameState.click_party()
+	AudioManager.play_sfx("click")
 	_play_click_particles()
 	_spawn_click_label(earned)
 
@@ -127,6 +128,7 @@ func _spawn_secret() -> void:
 	if _active_secret != null:
 		return
 
+	AudioManager.play_sfx("secret")
 	var secret_dict: Dictionary = _secret_data.pick_weighted()
 
 	# Build the button
@@ -195,6 +197,7 @@ func _on_secret_clicked(secret_dict: Dictionary) -> void:
 	var dying: Control = _active_secret
 	_active_secret = null
 
+	AudioManager.play_sfx("secret_collect")
 	# Disconnect despawn timer implicitly — node gone, timer callback guards with null check
 	dying.queue_free()
 

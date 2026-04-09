@@ -164,7 +164,8 @@ func _on_buy_pressed(venue_id: String) -> void:
 	var n := _get_effective_n(venue_id)
 	if n <= 0:
 		return
-	GameState.buy_venue_n(venue_id, n)
+	if GameState.buy_venue_n(venue_id, n) > 0:
+		AudioManager.play_sfx("purchase")
 
 func _on_venue_changed(_venue_id: String, _count: int) -> void:
 	_build_list()

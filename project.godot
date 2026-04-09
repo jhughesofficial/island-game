@@ -23,6 +23,8 @@ config/icon="res://icon.svg"
 
 GameState="*res://scripts/autoloads/GameState.gd"
 NumberFormatter="*res://scripts/utils/NumberFormatter.gd"
+AudioManager="*res://scripts/autoloads/AudioManager.gd"
+AchievementManager="*res://scripts/autoloads/AchievementManager.gd"
 MCPRuntime="*uid://dbka41haun54r"
 
 [editor_plugins]

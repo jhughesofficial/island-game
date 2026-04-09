@@ -9,6 +9,8 @@ var last_save_unix: int = 0    # Unix timestamp of last save
 var secrets_found: int = 0
 var act3_revealed: bool = false
 var narrative_events_seen: Array = []
+var heat_scare_survived: bool = false
+var endings_reached: Array = []
 
 # { venue_id: int }
 var venue_counts: Dictionary = {}
@@ -94,6 +96,7 @@ func _check_critical(delta: float) -> void:
 	else:
 		if _is_critical:
 			arrest_countdown_changed.emit(0.0)
+			heat_scare_survived = true
 		_is_critical = false
 		_critical_timer = 0.0
 
@@ -375,6 +378,8 @@ func save_game() -> void:
 		"secrets_found": secrets_found,
 		"act3_revealed": act3_revealed,
 		"narrative_events_seen": narrative_events_seen,
+		"heat_scare_survived": heat_scare_survived,
+		"endings_reached": endings_reached,
 		"saved_at": Time.get_unix_time_from_system()
 	}
 	var file = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
@@ -404,6 +409,8 @@ func load_game() -> void:
 	secrets_found = int(parsed.get("secrets_found", 0))
 	act3_revealed = bool(parsed.get("act3_revealed", false))
 	narrative_events_seen = parsed.get("narrative_events_seen", [])
+	heat_scare_survived = bool(parsed.get("heat_scare_survived", false))
+	endings_reached = parsed.get("endings_reached", [])
 	# Offline earnings
 	var saved_at: int = int(parsed.get("saved_at", 0))
 	if saved_at > 0:
@@ -433,6 +440,8 @@ func reset_game() -> void:
 	secrets_found = 0
 	act3_revealed = false
 	narrative_events_seen = []
+	heat_scare_survived = false
+	endings_reached = []
 	_auto_click_acc = 0.0
 	_rebuild_rates()
 	game_reset.emit()

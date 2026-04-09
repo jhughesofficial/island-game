@@ -123,7 +123,8 @@ func _on_hire_pressed(staff_id: String) -> void:
 	var n := _get_effective_n(staff_id)
 	if n <= 0:
 		return
-	GameState.buy_staff_n(staff_id, n)
+	if GameState.buy_staff_n(staff_id, n) > 0:
+		AudioManager.play_sfx("purchase")
 
 func _on_staff_changed(staff_id: String, count: int) -> void:
 	var row = list.get_node_or_null("row_" + staff_id)

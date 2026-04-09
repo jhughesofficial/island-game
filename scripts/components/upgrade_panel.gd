@@ -96,7 +96,8 @@ func _make_mystery_row(prereq_name: String) -> HBoxContainer:
 	return row
 
 func _on_buy(upgrade_id: String) -> void:
-	GameState.buy_upgrade(upgrade_id)
+	if GameState.buy_upgrade(upgrade_id):
+		AudioManager.play_sfx("purchase")
 
 func _on_lifetime_changed(_amount: float) -> void:
 	var sig := _get_sig()
