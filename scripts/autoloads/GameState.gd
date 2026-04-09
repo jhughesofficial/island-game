@@ -7,6 +7,7 @@ var political_influence: int = 0
 var heat: float = 0.0          # 0.0 – 5.0; 5.0 = CRITICAL
 var last_save_unix: int = 0    # Unix timestamp of last save
 var secrets_found: int = 0
+var time_played: float = 0.0   # Total seconds of active play
 var act3_revealed: bool = false
 var narrative_events_seen: Array = []
 var heat_scare_survived: bool = false
@@ -85,6 +86,7 @@ func _ready() -> void:
 	_rebuild_rates()
 
 func _process(delta: float) -> void:
+	time_played += delta
 	_tick_income(delta)
 	_tick_heat(delta)
 	_check_critical(delta)
@@ -399,6 +401,7 @@ func save_game() -> void:
 		"vips_recruited": vips_recruited,
 		"staff_counts": staff_counts,
 		"secrets_found": secrets_found,
+		"time_played": time_played,
 		"act3_revealed": act3_revealed,
 		"narrative_events_seen": narrative_events_seen,
 		"heat_scare_survived": heat_scare_survived,
@@ -433,6 +436,7 @@ func load_game() -> void:
 	vips_recruited = parsed.get("vips_recruited", {})
 	staff_counts = parsed.get("staff_counts", {})
 	secrets_found = int(parsed.get("secrets_found", 0))
+	time_played = float(parsed.get("time_played", 0.0))
 	act3_revealed = bool(parsed.get("act3_revealed", false))
 	narrative_events_seen = parsed.get("narrative_events_seen", [])
 	heat_scare_survived = bool(parsed.get("heat_scare_survived", false))
@@ -491,6 +495,7 @@ func reset_game() -> void:
 	vips_recruited = {}
 	staff_counts = {}
 	secrets_found = 0
+	time_played = 0.0
 	act3_revealed = false
 	narrative_events_seen = []
 	heat_scare_survived = false
