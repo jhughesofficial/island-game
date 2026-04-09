@@ -3,9 +3,10 @@
 *.translation
 *.uid
 *.import
-export_presets.cfg
 export/
-builds/
+builds/windows/
+builds/mac/
+builds/web/
 
 # Mono/C#
 .mono/

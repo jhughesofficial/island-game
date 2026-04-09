@@ -70,13 +70,20 @@ const SHADOW_OFFSET: Vector2 = Vector2(4.0, 6.0)
 @onready var particles:      CPUParticles2D = $CPUParticles2D
 @onready var ocean_bg:       ColorRect      = $OceanBg
 
-var _venue_nodes:      Dictionary = {}
-var _secret_timer:     float      = 0.0
-var _active_secret:    Control    = null
-var _secret_data:      Node       = null
-var _staff_rate_label: Label      = null
-var _seagull_timer:    float      = 0.0
-var _seagull_label:    Label      = null
+var _venue_nodes:       Dictionary = {}
+var _secret_timer:      float      = 0.0
+var _active_secret:     Control    = null
+var _secret_data:       Node       = null
+var _staff_rate_label:  Label      = null
+var _seagull_timer:     float      = 0.0
+var _seagull_label:     Label      = null
+var _tooltip:           PanelContainer = null
+var _tooltip_name_lbl:  Label      = null
+var _tooltip_count_lbl: Label      = null
+var _tooltip_income_lbl: Label     = null
+var _tooltip_upg_lbl:   Label      = null
+var _venue_data_node:   Node       = null
+var _upgrade_data_node: Node       = null
 
 func _ready() -> void:
 	add_to_group("island_map")
@@ -85,10 +92,13 @@ func _ready() -> void:
 	throw_btn.pressed.connect(_on_throw_party)
 	throw_btn.text = "🎉 Throw Party"
 	_secret_data = load("res://scripts/data/SecretData.gd").new()
+	_venue_data_node = load("res://scripts/data/VenueData.gd").new()
+	_upgrade_data_node = load("res://scripts/data/UpgradeData.gd").new()
 	_rebuild_polygon()
 	_sync_from_state()
 	_schedule_next_secret()
 	_setup_staff_rate_label()
+	_setup_tooltip()
 	if GameState.has_signal("staff_count_changed"):
 		GameState.staff_count_changed.connect(_on_staff_count_changed)
 	_start_ocean_shimmer()
@@ -226,6 +236,102 @@ func _on_seagull_done() -> void:
 	_seagull_label = null
 	_schedule_next_seagull()
 
+# ── Tooltip ───────────────────────────────────────────────────────────────────
+
+func _setup_tooltip() -> void:
+	_tooltip = PanelContainer.new()
+	_tooltip.name = "Tooltip"
+
+	var style := StyleBoxFlat.new()
+	style.bg_color                   = Color(0.0, 0.0, 0.0, 0.85)
+	style.corner_radius_top_left     = 6
+	style.corner_radius_top_right    = 6
+	style.corner_radius_bottom_left  = 6
+	style.corner_radius_bottom_right = 6
+	style.content_margin_left        = 10.0
+	style.content_margin_right       = 10.0
+	style.content_margin_top         = 8.0
+	style.content_margin_bottom      = 8.0
+	_tooltip.add_theme_stylebox_override("panel", style)
+	_tooltip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 2)
+	_tooltip.add_child(vbox)
+
+	_tooltip_name_lbl = Label.new()
+	_tooltip_name_lbl.add_theme_font_size_override("font_size", 14)
+	_tooltip_name_lbl.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 1.0))
+	vbox.add_child(_tooltip_name_lbl)
+
+	_tooltip_count_lbl = Label.new()
+	_tooltip_count_lbl.add_theme_font_size_override("font_size", 12)
+	_tooltip_count_lbl.add_theme_color_override("font_color", Color(0.75, 0.85, 1.0, 1.0))
+	vbox.add_child(_tooltip_count_lbl)
+
+	_tooltip_income_lbl = Label.new()
+	_tooltip_income_lbl.add_theme_font_size_override("font_size", 12)
+	_tooltip_income_lbl.add_theme_color_override("font_color", Color(0.6, 0.95, 0.6, 1.0))
+	vbox.add_child(_tooltip_income_lbl)
+
+	_tooltip_upg_lbl = Label.new()
+	_tooltip_upg_lbl.add_theme_font_size_override("font_size", 11)
+	_tooltip_upg_lbl.add_theme_color_override("font_color", Color(1.0, 0.85, 0.4, 1.0))
+	vbox.add_child(_tooltip_upg_lbl)
+
+	_tooltip.visible = false
+	add_child(_tooltip)
+
+func _on_venue_hover_enter(venue_id: String) -> void:
+	# Find venue dict
+	var venue: Dictionary = {}
+	for v in _venue_data_node.VENUES:
+		if v.id == venue_id:
+			venue = v
+			break
+	if venue.is_empty():
+		return
+
+	var count: int = GameState.venue_counts.get(venue_id, 0)
+
+	# Base income (without VIP multiplier — honest approximation)
+	var qty_mult: float = _venue_data_node.get_quantity_multiplier(count)
+	var upg_mult: float = 1.0
+	var upg_purchased: bool = false
+	for upg in _upgrade_data_node.UPGRADES:
+		if upg.type == venue_id and GameState.upgrades_purchased.get(upg.id, false):
+			upg_mult *= upg.multiplier
+			upg_purchased = true
+
+	var base_income: float = venue.base_income * count * qty_mult * upg_mult
+
+	# Populate labels
+	_tooltip_name_lbl.text = venue.name
+	_tooltip_count_lbl.text = "x%d owned" % count
+	_tooltip_income_lbl.text = "~$%s base" % NumberFormatter.format_rate(base_income)
+	_tooltip_upg_lbl.text = "Upgraded ✓" if upg_purchased else ""
+	_tooltip_upg_lbl.visible = upg_purchased
+
+	# Position: venue panel position (in venues_layer space) + venues_layer offset + icon width
+	var venue_node: Control = _venue_nodes.get(venue_id)
+	if venue_node == null:
+		return
+	var raw_pos: Vector2 = venues_layer.position + venue_node.position + Vector2(VENUE_SIZE.x + 4.0, 0.0)
+
+	# Wait one frame for tooltip to size itself, then clamp
+	await get_tree().process_frame
+	if not is_instance_valid(_tooltip):
+		return
+	var tooltip_size: Vector2 = _tooltip.size
+	var map_size: Vector2 = size
+	raw_pos.x = clampf(raw_pos.x, 0.0, map_size.x - tooltip_size.x)
+	raw_pos.y = clampf(raw_pos.y, 0.0, map_size.y - tooltip_size.y)
+	_tooltip.position = raw_pos
+	_tooltip.visible = true
+
+func _on_venue_hover_exit() -> void:
+	_tooltip.visible = false
+
 # ── Venue helpers ─────────────────────────────────────────────────────────────
 
 func _sync_from_state() -> void:
@@ -305,6 +411,10 @@ func _show_venue(venue_id: String) -> void:
 	count_lbl.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7, 1.0))
 	count_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(count_lbl)
+
+	panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	panel.mouse_entered.connect(_on_venue_hover_enter.bind(venue_id))
+	panel.mouse_exited.connect(_on_venue_hover_exit)
 
 	venues_layer.add_child(panel)
 	_reposition_venue(venue_id, panel)
