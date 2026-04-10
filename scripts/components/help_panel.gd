@@ -85,6 +85,17 @@ TIPS
 @onready var help_label: Label = $Panel/VBoxContainer/ScrollContainer/HelpLabel
 
 func _ready() -> void:
+	# Wrap help_label in a MarginContainer for padding against the modal edges
+	var scroll_parent := help_label.get_parent()
+	scroll_parent.remove_child(help_label)
+	var mc := MarginContainer.new()
+	mc.add_theme_constant_override("margin_left", 14)
+	mc.add_theme_constant_override("margin_right", 14)
+	mc.add_theme_constant_override("margin_top", 8)
+	mc.add_theme_constant_override("margin_bottom", 8)
+	mc.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll_parent.add_child(mc)
+	mc.add_child(help_label)
 	help_label.text = HELP_TEXT
 	close_btn.pressed.connect(func(): hide())
 

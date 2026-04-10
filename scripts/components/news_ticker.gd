@@ -70,12 +70,13 @@ const ACT4_HEADLINES: Array[String] = [
 	"THE MATTER HAS BEEN RESOLVED — THAT'S ALL WE'VE BEEN AUTHORIZED TO SAY",
 ]
 
-@onready var ticker_label: Label = /TickerLabel
+@onready var ticker_label: Label = $MarginContainer/TickerLabel
 
 var _current_index: int = 0
 var _scroll_x: float = 0.0
 var _speed: float = 80.0  # pixels per second
 var _current_act: int = 1
+var _initialized: bool = false  # true after first frame when size is known
 
 const ACT2_THRESHOLD: float = 1_000_000.0
 const ACT3_THRESHOLD: float = 50_000_000.0
@@ -87,20 +88,25 @@ func _ready() -> void:
 	var pool := _current_pool()
 	_current_index = randi() % pool.size()
 	ticker_label.text = "  ★  " + pool[_current_index] + "  ★  " + pool[(_current_index + 1) % pool.size()]
-	_scroll_x = 0.0
-	# Ghost mode uses sinister Act 1 pool — reassign after initial setup
 	if GameState.ghost_mode and _current_act == 1:
 		_current_index = randi() % ACT1_GHOST_HEADLINES.size()
+	# Position will be set in _process on first frame once size is known
 
 func _process(delta: float) -> void:
+	# On first frame, start the label just off the right edge so it scrolls in
+	if not _initialized:
+		_scroll_x = size.x
+		_initialized = true
+
 	_scroll_x -= _speed * delta
 	ticker_label.position.x = _scroll_x
-	# When the first headline has fully scrolled off, advance and reset
-	if _scroll_x < -ticker_label.size.x * 0.5:
+
+	# When the label has fully scrolled off the left edge, loop back from the right
+	if _scroll_x + ticker_label.size.x <= 0.0:
 		var pool := _current_pool()
 		_current_index = (_current_index + 1) % pool.size()
 		ticker_label.text = "  ★  " + pool[_current_index] + "  ★  " + pool[(_current_index + 1) % pool.size()]
-		_scroll_x = 0.0
+		_scroll_x = size.x
 
 func _on_lifetime_money_changed(amount: float) -> void:
 	var new_act := _act_for(amount)

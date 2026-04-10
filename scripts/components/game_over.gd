@@ -6,8 +6,8 @@ extends Control
 @onready var stats_label:   Label  = $CenterContainer/VBoxContainer/StatsLabel
 @onready var pi_label:      Label  = $CenterContainer/VBoxContainer/PILabel
 @onready var ghost_label:   Label  = $CenterContainer/VBoxContainer/GhostLabel
-@onready var restart_btn:   Button = $CenterContainer/VBoxContainer/RestartBtn
-@onready var main_menu_btn: Button = $CenterContainer/VBoxContainer/MainMenuBtn
+@onready var restart_btn:   Button = $CenterContainer/VBoxContainer/ButtonRow/RestartBtn
+@onready var main_menu_btn: Button = $CenterContainer/VBoxContainer/ButtonRow/MainMenuBtn
 @onready var center:        CenterContainer = $CenterContainer
 
 var _current_ending: String = ""

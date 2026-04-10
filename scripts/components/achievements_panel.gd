@@ -27,7 +27,7 @@ func _rebuild_list() -> void:
 		var is_secret: bool = achievement.secret
 
 		var row := HBoxContainer.new()
-		row.theme_override_constants_separation = 8
+		row.add_theme_constant_override("separation", 8)
 
 		var info_col := VBoxContainer.new()
 		info_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL

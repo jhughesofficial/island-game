@@ -67,9 +67,9 @@ func _build_widget() -> void:
 	anchor_right  = 1.0
 	anchor_bottom = 1.0
 	offset_left   = -148.0
-	offset_top    = -88.0
+	offset_top    = -148.0
 	offset_right  = -8.0
-	offset_bottom = -36.0  # above the staff rate label
+	offset_bottom = -96.0  # above ThrowPartyBtn (which occupies bottom 80px)
 	mouse_filter  = MOUSE_FILTER_IGNORE
 
 	# Outer frame — dark gunmetal with slight blue tint

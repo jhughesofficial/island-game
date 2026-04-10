@@ -2,19 +2,20 @@ extends Control
 
 @onready var close_btn: Button = $Panel/VBoxContainer/HeaderRow/CloseBtn
 @onready var stats_grid: VBoxContainer = $Panel/VBoxContainer/ScrollContainer/StatsGrid
-@onready var total_earned_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/TotalEarnedVal
-@onready var current_balance_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/CurrentBalanceVal
-@onready var passive_income_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/PassiveIncomeVal
-@onready var click_value_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/ClickValueVal
-@onready var political_influence_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/PoliticalInfluenceVal
-@onready var heat_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/HeatVal
-@onready var venues_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/VenuesVal
-@onready var upgrades_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/UpgradesVal
-@onready var vips_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/VIPsVal
-@onready var staff_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/StaffVal
-@onready var secrets_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/SecretsVal
-@onready var auto_clicks_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/AutoClicksVal
-@onready var peak_income_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/PeakIncomeVal
+@onready var total_earned_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/TotalEarnedRow/TotalEarnedVal
+@onready var current_balance_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/CurrentBalanceRow/CurrentBalanceVal
+@onready var passive_income_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/PassiveIncomeRow/PassiveIncomeVal
+@onready var click_value_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/ClickValueRow/ClickValueVal
+@onready var political_influence_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/PoliticalInfluenceRow/PoliticalInfluenceVal
+@onready var heat_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/HeatRow/HeatVal
+@onready var venues_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/VenuesRow/VenuesVal
+@onready var upgrades_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/UpgradesRow/UpgradesVal
+@onready var vips_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/VIPsRow/VIPsVal
+@onready var staff_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/StaffRow/StaffVal
+@onready var secrets_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/SecretsRow/SecretsVal
+@onready var auto_clicks_val: Label = $Panel/VBoxContainer/ScrollContainer/StatsGrid/AutoClicksRow/AutoClicksVal
+
+var peak_income_val: Label = null  # created dynamically in _ready (not in scene)
 
 var _peak_income_per_second: float = 0.0
 var _identity_row: HBoxContainer = null
@@ -22,6 +23,7 @@ var _identity_val: Label = null
 
 func _ready() -> void:
 	close_btn.pressed.connect(func(): hide())
+	_build_peak_income_row()
 	_build_identity_row()
 
 func _process(_delta: float) -> void:
@@ -39,6 +41,18 @@ func show_panel() -> void:
 	$Panel.pivot_offset = $Panel.size / 2
 	var tween := create_tween()
 	tween.tween_property($Panel, "scale", Vector2(1.0, 1.0), 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+func _build_peak_income_row() -> void:
+	var row := HBoxContainer.new()
+	var lbl := Label.new()
+	lbl.text = "Peak Income/s"
+	lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	lbl.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6, 1))
+	row.add_child(lbl)
+	peak_income_val = Label.new()
+	peak_income_val.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	row.add_child(peak_income_val)
+	stats_grid.add_child(row)
 
 func _build_identity_row() -> void:
 	_identity_row = HBoxContainer.new()
