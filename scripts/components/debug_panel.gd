@@ -23,6 +23,11 @@ func _ready() -> void:
 	$VBoxContainer/UnlockGhost.pressed.connect(_on_unlock_ghost)
 	$VBoxContainer/CycleIdentity.pressed.connect(_on_cycle_identity)
 	$VBoxContainer/ClearIdentity.pressed.connect(_on_clear_identity)
+	# Reset prestige (ghost mode + retired identities) — test helper
+	var reset_prestige_btn := Button.new()
+	reset_prestige_btn.text = "Reset Prestige"
+	reset_prestige_btn.pressed.connect(_on_reset_prestige)
+	$VBoxContainer.add_child(reset_prestige_btn)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -84,6 +89,12 @@ func _on_unlock_all_venues() -> void:
 
 func _on_unlock_ghost() -> void:
 	GameState.unlock_ghost_mode()
+
+func _on_reset_prestige() -> void:
+	GameState.ghost_mode = false
+	GameState.retired_identities = []
+	GameState.save_prestige()
+	GameState.reset_game()
 
 func _on_cycle_identity() -> void:
 	var id_data = load("res://scripts/data/IdentityData.gd").new()

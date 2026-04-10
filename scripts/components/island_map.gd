@@ -1,14 +1,14 @@
 extends Control
 
 const VENUE_POSITIONS: Dictionary = {
-	"bonfire":   Vector2(0.25, 0.60),  # was (0.15,0.75) — below island polygon; moved onto SW coast
-	"yacht":     Vector2(0.05, 0.55),
-	"villa":     Vector2(0.55, 0.30),
-	"jet":       Vector2(0.70, 0.65),
-	"offshore":  Vector2(0.80, 0.20),
-	"shell":     Vector2(0.30, 0.20),
-	"political": Vector2(0.45, 0.50),
-	"blackout":  Vector2(0.20, 0.40),
+	"bonfire":   Vector2(0.22, 0.55),  # west area, above SW coast
+	"yacht":     Vector2(0.15, 0.47),  # west shore interior
+	"villa":     Vector2(0.55, 0.35),  # upper-center
+	"jet":       Vector2(0.72, 0.48),  # east-center
+	"offshore":  Vector2(0.76, 0.38),  # east interior, below NE coast
+	"shell":     Vector2(0.38, 0.45),  # center
+	"political": Vector2(0.50, 0.55),  # center-south
+	"blackout":  Vector2(0.28, 0.38),  # left-center upper
 }
 
 const VENUE_EMOJIS: Dictionary = {
